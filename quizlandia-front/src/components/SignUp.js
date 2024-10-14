@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button } from '@mui/material';
+import { backEndpoint } from '../envs';
 
 function SignUp(props) {
     const [email, setEmail] = useState('');
@@ -28,6 +29,16 @@ function SignUp(props) {
         if (validate()) {
             // Proceed with form submission
             console.log("Form submitted");
+            fetch(backEndpoint + '/auth', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            })
         }
     };
 
