@@ -1,25 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "/Users/justinas/Documents/repos/quizlandia/quizlandia-back/quizlandia-back.csproj": {}
+    "C:\\Users\\edvar\\Source\\Repos\\justinasRm\\quizlandia-front\\quizlandia-back\\quizlandia-back.csproj": {}
   },
   "projects": {
-    "/Users/justinas/Documents/repos/quizlandia/quizlandia-back/quizlandia-back.csproj": {
+    "C:\\Users\\edvar\\Source\\Repos\\justinasRm\\quizlandia-front\\quizlandia-back\\quizlandia-back.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/justinas/Documents/repos/quizlandia/quizlandia-back/quizlandia-back.csproj",
+        "projectUniqueName": "C:\\Users\\edvar\\Source\\Repos\\justinasRm\\quizlandia-front\\quizlandia-back\\quizlandia-back.csproj",
         "projectName": "quizlandia-back",
-        "projectPath": "/Users/justinas/Documents/repos/quizlandia/quizlandia-back/quizlandia-back.csproj",
-        "packagesPath": "/Users/justinas/.nuget/packages/",
-        "outputPath": "/Users/justinas/Documents/repos/quizlandia/quizlandia-back/obj/",
+        "projectPath": "C:\\Users\\edvar\\Source\\Repos\\justinasRm\\quizlandia-front\\quizlandia-back\\quizlandia-back.csproj",
+        "packagesPath": "C:\\Users\\edvar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\edvar\\Source\\Repos\\justinasRm\\quizlandia-front\\quizlandia-back\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/justinas/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\edvar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -71,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.401/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.400/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

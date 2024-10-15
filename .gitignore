@@ -1,0 +1,84 @@
+.vs/
+
+# Ignore the bin and obj folders
+quizlandia-back/bin/
+quizlandia-back/obj/
+
+# Ignore user-specific files
+quizlandia-back/*.user
+quizlandia-back/*.suo
+
+# Ignore build output
+quizlandia-back/*.exe
+quizlandia-back/*.dll
+quizlandia-back/*.pdb
+
+# Ignore package management files
+quizlandia-back/packages/
+
+# Ignore temporary files
+quizlandia-back/*.log
+quizlandia-back/*.tmp
+
+# Ignore VS Code settings
+quizlandia-back/.vscode/
+
+# Ignore OS-specific files
+quizlandia-back/.DS_Store
+quizlandia-back/Thumbs.db
+
+
+
+
+
+# front
+
+# dependencies
+quizlandia-front/node_modules
+quizlandia-front/.pnp
+quizlandia-front/.pnp.js
+
+# testing
+quizlandia-front/coverage
+
+# production
+quizlandia-front/build
+
+# misc
+quizlandia-front/.DS_Store
+quizlandia-front/.env.local
+quizlandia-front/.env.development.local
+quizlandia-front/.env.test.local
+quizlandia-front/.env.production.local
+
+quizlandia-front/npm-debug.log*
+quizlandia-front/yarn-debug.log*
+quizlandia-front/yarn-error.log*
+
+# Ignore the bin and obj folders
+quizlandia-front/bin/
+quizlandia-front/obj/
+
+# Ignore user-specific files
+quizlandia-front/*.user
+quizlandia-front/*.suo
+
+# Ignore build output
+quizlandia-front/*.exe
+quizlandia-front/*.dll
+quizlandia-front/*.pdb
+
+# Ignore package management files
+quizlandia-front/packages/
+
+# Ignore temporary files
+quizlandia-front/*.log
+quizlandia-front/*.tmp
+
+# Ignore VS Code settings
+quizlandia-front/.vscode/
+quizlandia-front/.vs/
+
+# Ignore OS-specific files
+quizlandia-front/.DS_Store
+quizlandia-front/Thumbs.db
