@@ -1,49 +1,57 @@
 import React, { useState } from 'react';
-import { TextField, Button } from '@mui/material';
-import { backEndpoint } from '../envs';
+import { TextField, Button, Text } from '@mui/material';
+import { signupUser } from '../functions/authFunctions';
 
 function SignUp(props) {
     const [email, setEmail] = useState('');
     const [repeatEmail, setRepeatEmail] = useState('');
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
-    const [errors, setErrors] = useState({});
-
+    const [error, setError] = useState(null);
     const validateEmailFormat = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
 
     const validate = () => {
-        let tempErrors = {};
-        if (!validateEmailFormat(email)) tempErrors.email = "Invalid email format";
-        if (email !== repeatEmail) tempErrors.repeatEmail = "Emails do not match";
-        if (password !== repeatPassword) tempErrors.password = "Passwords do not match";
-        if(password.length < 8) tempErrors.password = "Password must be at least 8 characters long";
-        setErrors(tempErrors);
-        return Object.keys(tempErrors).length === 0;
+        if (!validateEmailFormat(email)) {
+            setError("Invalid email format");
+            return
+        } else if (email !== repeatEmail) {
+            setError("Emails do not match");
+            return
+        } else if (password !== repeatPassword) {
+            setError("Passwords do not match")
+            return
+        } else if (password.length < 8) {
+            setError("Password must be at least 8 characters long");
+            return
+        } else if (!/[A-Z]/.test(password)) {
+            setError('Password must contain at least one uppercase letter');
+            return
+        } else if (!/[a-z]/.test(password)) {
+            setError('Password must contain at least one lowercase letter')
+            return
+        }
+        return true;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (validate()) {
-            // Proceed with form submission
-            console.log("Form submitted");
-            fetch(backEndpoint + '/auth', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email,
-                    password
-                })
-            })
+            const signup = await signupUser(email, password);
+            if(signup.error){
+                setError({email: signup.error});
+                return;
+            } else {
+                props.setUid(signup.uid);
+
+            }
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px', width: '100%' }}>
+        <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px', width: '100%' }}>
             <TextField
                 label="Email"
                 type="email"
@@ -53,8 +61,6 @@ function SignUp(props) {
                 fullWidth
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                error={!!errors.email}
-                helperText={errors.email}
             />
             <TextField
                 label="Repeat Email"
@@ -65,8 +71,6 @@ function SignUp(props) {
                 fullWidth
                 value={repeatEmail}
                 onChange={(e) => setRepeatEmail(e.target.value)}
-                error={!!errors.repeatEmail}
-                helperText={errors.repeatEmail}
             />
             <TextField
                 label="Password"
@@ -77,8 +81,6 @@ function SignUp(props) {
                 fullWidth
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                error={!!errors.password}
-                helperText={errors.password}
             />
             <TextField
                 label="Repeat Password"
@@ -89,8 +91,6 @@ function SignUp(props) {
                 fullWidth
                 value={repeatPassword}
                 onChange={(e) => setRepeatPassword(e.target.value)}
-                error={!!errors.password}
-                helperText={errors.password}
             />
             <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
                 Sign Up
@@ -98,6 +98,7 @@ function SignUp(props) {
             <Button variant="text" color="primary" style={{ marginTop: '10px' }} onClick={() => props.setSigninFlow(true)}>
                 Already have an account? Sign In
             </Button>
+            {error && <text style={{color: 'red', textAlign: 'center'}}>{error}</text>}
         </form>
     );
 }

@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TextField, Button } from '@mui/material';
+import { loginUser } from '../functions/authFunctions';
 
 function SignIn(props) {
-    console.log(props)
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState(null);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!email || !password) {
+            setError('Please fill in all fields');
+            return;
+        }
+        const login = await loginUser(email, password);
+        if(login.error){
+            setError(login.error);
+            return;
+        }
+       
+    };
+
     return (
-        <form style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px', width: '100%' }}>
+        <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px', width: '100%' }}>
             <TextField
                 label="Email"
                 type="email"
@@ -12,6 +30,8 @@ function SignIn(props) {
                 margin="normal"
                 required
                 fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
                 label="Password"
@@ -20,6 +40,8 @@ function SignIn(props) {
                 margin="normal"
                 required
                 fullWidth
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
                 Sign In
@@ -27,6 +49,8 @@ function SignIn(props) {
             <Button variant="text" color="primary" style={{ marginTop: '10px' }} onClick={() => props.setSigninFlow(false)}>
                 Don't have an account? Sign Up
             </Button>
+            {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+
         </form>
     );
 }

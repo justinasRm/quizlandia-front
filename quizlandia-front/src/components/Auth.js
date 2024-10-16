@@ -3,7 +3,7 @@ import { Container, Typography, Button } from '@mui/material';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
 
-function Auth() {
+function Auth(props) {
     const [signinFlow, setSigninFlow] = useState(true);
 
     useEffect(() => {
@@ -14,8 +14,8 @@ function Auth() {
             <Typography variant="h4" component="h1" gutterBottom>
                 Welcome to <em style={{ color: 'blue' }}>Quizlandia!</em>
             </Typography>
-            {signinFlow && <SignIn setSigninFlow={setSigninFlow}/>}
-            {!signinFlow && <SignUp setSigninFlow={setSigninFlow}/>}
+            {signinFlow && <SignIn setSigninFlow={setSigninFlow} setUid={props.setUid}/>}
+            {!signinFlow && <SignUp setSigninFlow={setSigninFlow} setUid={props.setUid}/>}
             <Button variant="contained" color="secondary" style={{ marginTop: '10px' }}>
                 Authenticate with Google
             </Button>
