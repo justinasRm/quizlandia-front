@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Auth from './components/Auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import MainPage from './components/mainPage';
+import Header from './components/Header';
 
 const theme = createTheme({
   palette: {
@@ -47,12 +49,21 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
-        {uid ? <MainPage /> :
-          <>
-            {uid === null ? <Auth setUid={setUid} /> : 'Loading...'}
-          </>
-          }
+
+      <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh', maxWidth: "1440px",  margin: "auto" }}>
+
+        <Router>
+
+          {uid && <Header />}
+
+          <Routes>
+
+            <Route path="/" element={uid ? <MainPage /> : <> {uid === null ? <Auth setUid={setUid} /> : 'Loading...'} </>} />
+
+          </Routes>
+
+        </Router>
+
       </div>
     </ThemeProvider>
   );

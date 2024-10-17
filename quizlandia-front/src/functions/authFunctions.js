@@ -1,5 +1,6 @@
 import { auth } from '../firebaseConfig'; // Adjust the import path as needed
 import { setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 
 export const signupUser = async (email, password) => {
     try {
@@ -46,3 +47,13 @@ export const loginUser = async (email, password) => {
         }
     }
 }
+
+export const logOut = () => {
+    const auth = getAuth();
+    signOut(auth).then(() => {
+        console.log('User signed out');
+        // Optionally, redirect the user to the login page or show a message
+    }).catch((error) => {
+        console.error('Error signing out:', error);
+    });
+};

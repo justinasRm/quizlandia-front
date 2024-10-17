@@ -1,25 +1,42 @@
-import { Button } from '@mui/material';
 import React from 'react';
-import { getAuth, signOut } from 'firebase/auth';
+import { Link } from 'react-router-dom';
+import './mainPage.css';
+import SettingsIcon from '@mui/icons-material/Settings';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import SearchIcon from '@mui/icons-material/Search';
+import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import ForumIcon from '@mui/icons-material/Forum';
 
 const MainPage = () => {
     console.log('MainPage');
 
-    const logOut = () => {
-        const auth = getAuth();
-        signOut(auth).then(() => {
-            console.log('User signed out');
-            // Optionally, redirect the user to the login page or show a message
-        }).catch((error) => {
-            console.error('Error signing out:', error);
-        });
-    };
-
     return (
-        <div>
-            <h1>Welcome to Quizlandia!</h1>
-            <p>Your ultimate quiz destination.</p>
-            <Button variant="contained" color="primary" onClick={()=>logOut()}>Log out</Button>
+        <div className="link-container">
+
+            <Link to="/settings">
+                <SettingsIcon />
+                Profile settings
+            </Link>
+
+            <Link to="/quiz-creation">
+                <AddCircleIcon />
+                Quiz creation
+            </Link>
+
+            <Link to="/search-quizzes">
+                <SearchIcon />
+                Search quizzes
+            </Link>
+
+            <Link to="/statistics">
+                <LeaderboardIcon />
+                Statistics
+            </Link>
+
+            <Link to="/forum">
+                <ForumIcon />
+                Forum
+            </Link>
         </div>
     );
 };
