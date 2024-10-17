@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, Button, Text } from '@mui/material';
 import { signupUser } from '../functions/authFunctions';
 
@@ -40,8 +40,8 @@ function SignUp(props) {
         e.preventDefault();
         if (validate()) {
             const signup = await signupUser(email, password);
-            if(signup.error){
-                setError({email: signup.error});
+            if (signup.error) {
+                setError(signup.error);
                 return;
             } else {
                 props.setUid(signup.uid);

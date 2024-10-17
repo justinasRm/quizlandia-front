@@ -1,6 +1,7 @@
-import { auth } from '../firebaseConfig'; // Adjust the import path as needed
 import { setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { getAuth, signOut } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
+import { setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 
 export const signupUser = async (email, password) => {
     try {
@@ -14,8 +15,8 @@ export const signupUser = async (email, password) => {
         // You can return the user or any other relevant information
         return user;
     } catch (error) {
-        console.log('error:')
-        console.log()
+        console.log('ERROR')
+        console.log(error.code)
         if(error.code.includes('email-already-in-use')){
             return {error: 'Email already in use'};
         } else if(error.code.includes('weak-password')){
@@ -35,6 +36,25 @@ export const loginUser = async (email, password) => {
     try {
         await setPersistence(auth, browserLocalPersistence);
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log('User signed in:', user);
+        // You can return the user or any other relevant information
+        return user;
+    } catch (error) {
+        console.log('error is:')
+        console.log(error.code)
+        console.log(error)
+        if(error.code.includes('invalid-credential')){
+            return {error: 'Wrong email, password or authentication method'};
+        }
+    }
+}
+
+export const authWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+        await setPersistence(auth, browserLocalPersistence);
+        const userCredential = await signInWithPopup(auth, provider);
         const user = userCredential.user;
         console.log('User signed in:', user);
         // You can return the user or any other relevant information
