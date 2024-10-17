@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Typography, Button } from '@mui/material';
+import { Container, Typography } from '@mui/material';
 import SignIn from './SignIn';
 import SignUp from './SignUp';
-
+import GoogleAuth from './GoogleAuth';
 function Auth(props) {
     const [signinFlow, setSigninFlow] = useState(true);
 
@@ -15,10 +15,8 @@ function Auth(props) {
                 Welcome to <em style={{ color: 'blue' }}>Quizlandia!</em>
             </Typography>
             {signinFlow && <SignIn setSigninFlow={setSigninFlow} setUid={props.setUid}/>}
-            {!signinFlow && <SignUp setSigninFlow={setSigninFlow} setUid={props.setUid}/>}
-            <Button variant="contained" color="secondary" style={{ marginTop: '10px' }}>
-                Authenticate with Google
-            </Button>
+            {!signinFlow && <SignUp setSigninFlow={setSigninFlow} setUid={props.setUid} />}
+            <GoogleAuth setSigninFlow={setSigninFlow} setUid={props.setUid} />
         </Container>
     );
 }
