@@ -6,6 +6,7 @@ import Auth from './components/Auth';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebaseConfig';
 import MainPage from './components/mainPage';
+import QuizPage from './components/quizPage';
 import Header from './components/Header';
 
 const theme = createTheme({
@@ -67,13 +68,16 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh', maxWidth: "1440px", margin: "auto" }}>
+            <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh'}}>
                 <Router>
                     {idToken && <Header />}
 
-                    <Routes>
-                        <Route path="/" element={idToken ? <MainPage /> : <Auth setUid={setUid} />} />
-                    </Routes>
+                    <div style={{ maxWidth: "1440px", margin: "auto" }}>
+                        <Routes>
+                            <Route path="/" element={idToken ? <MainPage /> : <Auth setUid={setUid} />} />
+                            <Route path="/quiz-creation" element={idToken ? <QuizPage /> : <Auth setUid={setUid} />} />
+                        </Routes>
+                    </div>
                 </Router>
             </div>
         </ThemeProvider>
