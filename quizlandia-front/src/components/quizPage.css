@@ -39,6 +39,7 @@
     color: rgb(96 76 226);
     border-bottom: 2px solid rgb(96 76 226);
     transition: 0.3s ease color;
+    pointer-events: none;
 }
 
 .quiz-types > div button:not(.active-type):hover{
@@ -122,6 +123,12 @@
 
 #reset-question{
     background-color: rgb(151 124 112);
+    transition: 0.3s ease all;
+}
+
+#reset-question:hover{
+    background-color: rgb(123 100 90);
+    transition: 0.3s ease all;
 }
 
 .new-question-block span{

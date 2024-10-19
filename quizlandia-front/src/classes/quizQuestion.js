@@ -1,11 +1,7 @@
 class QuizQuestion {
 
-    constructor(question, answers = []) {
-        this.question = question;
-        this.answers = answers;
-    }
+    static questionValid = false;
 
-    addAnswer(answerText, isCorrect = false) {
-        this.answers.push({ text: answerText, correctAnswer: isCorrect});
-    }
 }
+
+export default QuizQuestion;

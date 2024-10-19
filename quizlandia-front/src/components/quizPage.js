@@ -1,25 +1,31 @@
 import React, { useState } from 'react';
 import './quizPage.css';
+import ManualQuiz from './../classes/manualQuiz';
+import AiQuiz from './../classes/aiQuiz';
 
 const QuizPage = () => {
 
     const [activeIndex, setActiveIndex] = useState(0);
     const [createdQuestions, setQuestionCount] = useState(0);
+    const [quizKey, setQuizKey] = useState(0);
 
     const handleQuizTypeChange = (index) => {
-      setActiveIndex(index);
+        setActiveIndex(index);
     };
 
-    const handleQuizCountChange = (operation) => {
-        setQuestionCount((prevCount) => {
-            if (operation === 'add'){
-                return prevCount + 1
-            } else if(operation === 'subtract'){
-                Math.max(prevCount - 1, 0);
-            } else {
-                return prevCount;
-            } 
-        });
+    function resetQuiz(){
+        setQuizKey(prevKey => prevKey + 1);
+    };
+
+    const renderQuizComponent = () => {
+        switch (activeIndex) {
+            case 0:
+                return <ManualQuiz key={quizKey} />;
+            case 1:
+                return <AiQuiz key={quizKey} />;
+            default:
+                return null;
+        }
     };
   
     return (
@@ -37,43 +43,12 @@ const QuizPage = () => {
 
                 </div>
 
-                <div className='new-question-block'>
-                    <div>
-                        <div>
-                            <span>Question</span>
-                        </div>
-                        <textarea placeholder='Enter your question here.'></textarea>
-                    </div>
-                    <div className='answer-card'>
-                        <div>
-                            <span>Answer 1</span>
-
-                            <div>
-                                <label>Correct</label>
-                                <input type='checkbox'></input>
-                            </div>
-                        </div>
-                        <textarea placeholder='Enter your answer here.'></textarea>
-                    </div>
-                    <div className='answer-card'>
-                        <div>
-                            <span>Answer 2</span>
-
-                            <div>
-                                <label>Correct</label>
-                                <input type='checkbox'></input>
-                            </div>
-                        </div>
-                        <textarea placeholder='Enter your answer here.'></textarea>
-                    </div>
-                    
-                </div>
-                <button id='add-new-answer'>Add new answer</button>
+                {renderQuizComponent()}
             </div>
 
             <div className='question-helpers'>
-                <button id='add-new-question'>Add question</button>
-                <button id='reset-question'>Reset</button>
+                <button id='add-new-question' disabled>Add question</button>
+                <button id='reset-question' onClick={resetQuiz}>Reset</button>
             </div>
         </div>
 
