@@ -1,6 +1,7 @@
 .quiz-creation-block{
     min-width: 450px;
     min-height: 500px;
+    max-height: fit-content;
     background-color: white;
     border-radius: 8px;
     border: 1px solid lightgray;
@@ -76,8 +77,61 @@
 
 .quiz-summary-block{
     display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.created-questions{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.question{
+    background: white;
+    border-radius: 8px;
+    border: 1px solid lightgray;
+    padding: 25px;
+}
+
+.question > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.question > div > button{
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.question > div > span{
+    font-weight: 600;
+}
+
+.answers{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: start;
+    margin-top: 20px;
+}
+.answers p{
+    margin: 0px;
+}
+
+.correct-answer{
+    color: green;
+}
+
+.quiz-summary-block > div:first-child{
+    display: flex;
     justify-content: space-between;
     width: 100%;
+    align-items: center;
+    font-weight: 600;
 }
 
 .new-question-block{
@@ -117,18 +171,25 @@
     cursor: pointer;
 }
 
+#add-new-question, #add-new-question:disabled, #reset-question, #reset-question:hover{
+    transition: 0.3s ease all;
+}
+
 #add-new-question{
+    background-color: rgb(102 118 139);
+}
+
+#add-new-question:disabled{
     background-color: rgb(148 163 184);
+    pointer-events: none;
 }
 
 #reset-question{
     background-color: rgb(151 124 112);
-    transition: 0.3s ease all;
 }
 
 #reset-question:hover{
     background-color: rgb(123 100 90);
-    transition: 0.3s ease all;
 }
 
 .new-question-block span{

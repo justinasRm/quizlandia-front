@@ -1,28 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useRef  } from 'react';
 import './quizPage.css';
+import QuizQuestions from './../classes/quizQuestions';
 import ManualQuiz from './../classes/manualQuiz';
 import AiQuiz from './../classes/aiQuiz';
 
 const QuizPage = () => {
 
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [createdQuestions, setQuestionCount] = useState(0);
+    const questionsRef = useRef();
+    const manualQuizRef = useRef();
+    const aiQuizRef = useRef();
+
+    const [currentQuizIndex, setQuizIndex] = useState(0);
+    const [createdQuestionsCount, setQuestionCount] = useState(0);
+    const [isFormValid, setFormValidity] = useState(false);
+
+    // Used for correct rendering
     const [quizKey, setQuizKey] = useState(0);
 
+    // Checks if current form is valid for saving
+    const handleForm = (value) => {
+        setFormValidity(value);
+    }
+
+    const updateCreatedQuestions = (value) => {
+        setQuestionCount(value);
+    }
+    
     const handleQuizTypeChange = (index) => {
-        setActiveIndex(index);
+        setQuizIndex(index);
+        setFormValidity(false);
     };
 
-    function resetQuiz(){
+    function resetQuiz() {
         setQuizKey(prevKey => prevKey + 1);
+        setFormValidity(false);
     };
+    
+    function addQuestion() {
+        if (currentQuizIndex === 0 && manualQuizRef.current) {
+            manualQuizRef.current.saveQuizQuestion()
+        } else if (currentQuizIndex === 1 && aiQuizRef.current) {
+            aiQuizRef.current.test(); //TODO when AI type implemented
+        }
+        
+        // Resets form when new question added
+        setFormValidity(false);
+    }
+
+    function updateQuizQuestions(question) {
+        questionsRef.current.addQuestion(question);
+    }
 
     const renderQuizComponent = () => {
-        switch (activeIndex) {
+        switch (currentQuizIndex) {
             case 0:
-                return <ManualQuiz key={quizKey} />;
+                return <ManualQuiz key={quizKey} ref={manualQuizRef} onFormChange={handleForm} onSubmit={updateQuizQuestions}/>;
             case 1:
-                return <AiQuiz key={quizKey} />;
+                return <AiQuiz key={quizKey} ref={aiQuizRef} />;
             default:
                 return null;
         }
@@ -37,8 +71,8 @@ const QuizPage = () => {
                     <span>Quiz type:</span>
             
                     <div>
-                        <button className={activeIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}> Manual </button>
-                        <button className={activeIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}> AI </button>
+                        <button className={currentQuizIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}> Manual </button>
+                        <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}> AI </button>
                     </div>
 
                 </div>
@@ -47,16 +81,20 @@ const QuizPage = () => {
             </div>
 
             <div className='question-helpers'>
-                <button id='add-new-question' disabled>Add question</button>
+                <button id='add-new-question' disabled={!isFormValid} onClick={addQuestion}>Add question</button>
                 <button id='reset-question' onClick={resetQuiz}>Reset</button>
             </div>
         </div>
 
         <div className='quiz-summary-block'>
-            <span>Questions: {createdQuestions}</span>
-            <button id='save-quiz' disabled={createdQuestions === 0}>Save quiz</button>
+            <div>
+                <span>Questions: {createdQuestionsCount}</span>
+                <button id='save-quiz' disabled={createdQuestionsCount === 0}>Save quiz</button>
+            </div>
+            <div className='created-questions'>
+                <QuizQuestions ref={questionsRef}  onUpdateQuestions={updateCreatedQuestions} />
+            </div>
         </div>
-
       </div>
     );
 };

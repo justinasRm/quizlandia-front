@@ -1,20 +1,29 @@
 import React, { Component } from 'react';
-import QuizQuestion from './quizQuestion';
 
+/*
+ * Manual quiz component
+ * User manually writes a question with answers
+ * 
+ * Requirements for passing submission:
+ * 1) Question must not be empty
+ * 2) 1 non-empty answer which is also selected as correct
+ */
 class ManualQuiz extends Component{
 
     constructor() {
         super();
         this.state = {
             questionText: '',
-            createdAnswers: 1,
             answers: [
                 { id: 1, text: '', isCorrect: false}
-            ]
+            ],
+            canSubmit: false,
         };
     }
 
     render() {
+        const { questionText, answers } = this.state;
+
         return (
             <>
                 <div className='new-question-block'>
@@ -22,9 +31,9 @@ class ManualQuiz extends Component{
                         <div>
                             <span>Question</span>
                         </div>
-                        <textarea placeholder='Enter your question here.' value={this.state.questionText} onChange={this.handleQuestionChange}></textarea>
+                        <textarea placeholder='Enter your question here.' value={questionText} onChange={this.handleQuestionChange}></textarea>
                     </div>
-                    {this.state.answers.map((answer, index) => 
+                    {answers.map((answer, index) => 
                         this.createAnswerComponent(answer, index)
                     )}
                 </div>
@@ -33,7 +42,22 @@ class ManualQuiz extends Component{
         );
     }
 
-    canSubmitQuestion() {
+    // Adds newly created answer to state
+    addNewAnswer = () => {
+        const newAnswerId = this.state.answers.length + 1;
+        this.setState(prevState => ({
+            answers: [...prevState.answers, { id: newAnswerId, text: '', isCorrect: false }]
+        }));
+    }
+
+    /* 
+    * ==============================
+    * Methods for handling submission
+    * ==============================
+    */
+
+    // If requirements are met, returns True and allows to save the form
+    isFormValid() {
 
         if(this.state.questionText === ''){
             return false;
@@ -43,28 +67,63 @@ class ManualQuiz extends Component{
             answer.text.trim() !== '' && answer.isCorrect
         );
         
-        QuizQuestion.questionValid = hasValidAnswer;
+        this.setState({canSubmit: hasValidAnswer}, () => {
+            if(this.props.onFormChange){
+                this.props.onFormChange(this.state.canSubmit);
+            }
+        });
     }
 
+    // Returns form to default after submission
+    resetForm() {
+        this.setState({ questionText: '', answers: [{ id: 1, text: '', isCorrect: false }], canSubmit: false });
+    }
+
+    // Saves current question with answers to "QuizQuestions" class state
+    saveQuizQuestion = () => {
+
+        const { questionText, answers } = this.state;
+
+        const question = {
+            id: new Date().getTime(),
+            text: questionText,
+            answers: answers.filter(answer => answer.text.trim() !== ''),
+        };
+
+        this.props.onSubmit(question);
+        this.resetForm();
+    };
+
+    /* 
+    * ==============================
+    * Methods called when input value changes
+    * (if needed values are set, allows to save)
+    * ==============================
+    */
     handleQuestionChange = (e) => {
         this.setState({ questionText: e.target.value });
-        this.canSubmitQuestion()
+        this.isFormValid()
     }
 
     handleAnswerChange = (index, e) => {
         const newAnswers = [...this.state.answers];
         newAnswers[index].text = e.target.value;
         this.setState({ answers: newAnswers });
-        this.canSubmitQuestion()
+        this.isFormValid()
     }
 
     handleCheckboxChange = (index) => {
         const newAnswers = [...this.state.answers];
         newAnswers[index].isCorrect = !newAnswers[index].isCorrect;
         this.setState({ answers: newAnswers });
-        this.canSubmitQuestion()
+        this.isFormValid()
     }
 
+    /* 
+    * ==============================
+    * Method for creating new answer inputs
+    * ==============================
+    */
     createAnswerComponent(answer, index) {
         return (
             <div className='answer-card' key={answer.id}>
@@ -78,19 +137,6 @@ class ManualQuiz extends Component{
                 <textarea placeholder='Enter your answer here.' value={answer.text} onChange={(e) => this.handleAnswerChange(index, e)}></textarea>
             </div>
         );
-    }
-
-    addNewAnswer = () => {
-        this.setState(prevState => {
-            const newAnswerNumber = prevState.createdAnswers + 1;
-            return {
-                createdAnswers: newAnswerNumber,
-                answers: [
-                    ...prevState.answers,
-                    { id: newAnswerNumber, text: '', isCorrect: false}
-                ]
-            };
-        });
     }
 }
 
