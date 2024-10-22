@@ -1,43 +1,51 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './mainPage.css';
-import SettingsIcon from '@mui/icons-material/Settings';
-import AddCircleIcon from '@mui/icons-material/AddCircle';
-import SearchIcon from '@mui/icons-material/Search';
-import LeaderboardIcon from '@mui/icons-material/Leaderboard';
-import ForumIcon from '@mui/icons-material/Forum';
+import { ReactComponent as SettingsIcon } from './../assets/icons/settings.svg';
+import { ReactComponent as CreateIcon } from './../assets/icons/create.svg';
+import { ReactComponent as SearchIcon } from './../assets/icons/search.svg';
+import { ReactComponent as StatisticsIcon } from './../assets/icons/statistic.svg';
+import { ReactComponent as ForumIcon } from './../assets/icons/discussion.svg';
 
 const MainPage = () => {
+
+    //TODO 
     console.log('MainPage');
 
     return (
-        <div className="link-container">
+        <>
+            <h1 style={{textAlign: "center", marginBottom: "40px"}}>Main page</h1>
+            <div className="link-container-wrapper">
+                <div className="link-container">
 
-            <Link to="/settings">
-                <SettingsIcon />
-                Profile settings
-            </Link>
+                    <Link to="/quiz-creation">
+                        <CreateIcon />
+                        <span>Quiz creation</span>
+                    </Link>
 
-            <Link to="/quiz-creation">
-                <AddCircleIcon />
-                Quiz creation
-            </Link>
+                    <Link to="/search-quizzes">
+                        <SearchIcon />
+                        <span>Search quizzes</span>
+                    </Link>
 
-            <Link to="/search-quizzes">
-                <SearchIcon />
-                Search quizzes
-            </Link>
+                    <Link to="/forum">
+                        <ForumIcon />
+                        <span>Forum</span>
+                    </Link>
 
-            <Link to="/statistics">
-                <LeaderboardIcon />
-                Statistics
-            </Link>
+                    <Link to="/statistics">
+                        <StatisticsIcon />
+                        <span>Statistics</span>
+                    </Link>
 
-            <Link to="/forum">
-                <ForumIcon />
-                Forum
-            </Link>
-        </div>
+                    <Link to="/settings">
+                        <SettingsIcon />
+                        <span>Profile settings</span>
+                    </Link>
+                    
+                </div>
+            </div>
+        </>
     );
 };
 

@@ -1,24 +1,41 @@
+.link-container-wrapper{
+    display: flex;
+    justify-content: center;
+}
+
 .link-container{
     display: flex;
-    flex-direction: column;
     align-items: center;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
     font-size: 18px;
 }
 
 .link-container > a{
-    width: 200px;
+    width: 210px;
+    height: 150px;
+    border-radius: 20px;
+    padding: 16px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    background: white;
     text-decoration: none;
     color: black;
     font-family: sans-serif;
+    border: 1px solid lightgray;
+    transition: 0.1s ease all;
 }
-.link-container > a > svg{
-    width: 50px;
-    font-size: 1.8rem;
+
+.link-container span{
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
 }
 
 .link-container > a:hover{
-    text-decoration: underline;
+    text-decoration: none;
+    transform: scale(1.02);
+    transition: 0.1s ease all;
+    border: 1px solid rgb(96 76 226);
 }
