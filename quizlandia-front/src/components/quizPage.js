@@ -1,4 +1,4 @@
-import React, { useState, useRef  } from 'react';
+import React, { useState, useRef, useEffect  } from 'react';
 import './quizPage.css';
 import QuizQuestions from './../classes/quizQuestions';
 import ManualQuiz from './../classes/manualQuiz';
@@ -13,6 +13,12 @@ const QuizPage = () => {
     const [currentQuizIndex, setQuizIndex] = useState(0);
     const [createdQuestionsCount, setQuestionCount] = useState(0);
     const [isFormValid, setFormValidity] = useState(false);
+
+    useEffect(() => {
+        if(questionsRef.current) {
+            setQuestionCount(questionsRef.current.getQuestionCount());
+        }
+    }, [questionsRef]);
 
     // Used for correct rendering
     const [quizKey, setQuizKey] = useState(0);
@@ -89,7 +95,7 @@ const QuizPage = () => {
         <div className='quiz-summary-block'>
             <div>
                 <span>Questions: {createdQuestionsCount}</span>
-                <button id='save-quiz' disabled={createdQuestionsCount === 0}>Save quiz</button>
+                <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Save quiz</button>
             </div>
             <div className='created-questions'>
                 <QuizQuestions ref={questionsRef}  onUpdateQuestions={updateCreatedQuestions} />

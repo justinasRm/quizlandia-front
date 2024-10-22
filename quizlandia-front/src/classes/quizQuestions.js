@@ -19,8 +19,9 @@ class QuizQuestions extends Component{
     */
     constructor() {
         super();
+        const savedQuestions = localStorage.getItem('questions');
         this.state = {
-            questions: [],
+            questions: savedQuestions ? JSON.parse(savedQuestions) : [],
         };
     }
 
@@ -57,6 +58,9 @@ class QuizQuestions extends Component{
     addQuestion = (newQuestion) => {
         this.setState((prevState) => {
             const updatedQuestions = [...prevState.questions, newQuestion];
+
+            localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+
             this.props.onUpdateQuestions(prevState.questions.length + 1);
     
             return {
@@ -68,6 +72,9 @@ class QuizQuestions extends Component{
     deleteQuestion = (index) => {
         this.setState((prevState) => {
             const updatedQuestions = prevState.questions.filter((_, i) => i !== index);
+
+            localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+
             this.props.onUpdateQuestions(updatedQuestions.length);
     
             return {
@@ -80,6 +87,38 @@ class QuizQuestions extends Component{
     indexToLetter = (index) => {
         return String.fromCharCode(65 + index);
     };
+
+    getQuestionCount = () => {
+        return this.state.questions.length;
+    }
+
+    //TODO modify question object as needed before sending to API 
+    saveQuizToDatabase = () => {
+        const { questions } = this.state;
+        let quizToSend = []
+
+        questions.map((question,index) => {
+
+            let currentQuestion = {
+                //TODO check if ID needed
+                // id: question.id,
+                order: index + 1,
+                question: question.text,
+                answers: question.answers.map((answer, ansIndex) => ({
+                    //TODO check if ID needed
+                    // id: answer.id,
+                    order: ansIndex + 1,
+                    text: answer.text,
+                    isCorrect: answer.isCorrect,
+                }))
+            }
+
+            quizToSend.push(currentQuestion);
+        });
+
+        //TODO 
+        console.log("Saving quiz.........");
+    }
 }
 
 export default QuizQuestions;
