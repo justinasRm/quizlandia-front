@@ -49,7 +49,7 @@ class QuizQuestions extends Component{
                         </div>
                     ))
                 ) : (
-                    <p>No questions created yet.</p>
+                    <p>Dar nėra sukurta klausimų.</p>
                 )}
             </>
         );

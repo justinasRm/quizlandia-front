@@ -14,33 +14,33 @@ const MainPage = () => {
 
     return (
         <>
-            <h1 style={{textAlign: "center", marginBottom: "40px"}}>Main page</h1>
+            <h1 style={{textAlign: "center", marginBottom: "40px"}}>Pagrindinis puslapis</h1>
             <div className="link-container-wrapper">
                 <div className="link-container">
 
                     <Link to="/quiz-creation">
                         <CreateIcon />
-                        <span>Quiz creation</span>
+                        <span>Klausimyno kūrimas</span>
                     </Link>
 
                     <Link to="/search-quizzes">
                         <SearchIcon />
-                        <span>Search quizzes</span>
+                        <span>Naršyti klausimynus</span>
                     </Link>
 
                     <Link to="/forum">
                         <ForumIcon />
-                        <span>Forum</span>
+                        <span>Forumas</span>
                     </Link>
 
                     <Link to="/statistics">
                         <StatisticsIcon />
-                        <span>Statistics</span>
+                        <span>Statistika</span>
                     </Link>
 
                     <Link to="/settings">
                         <SettingsIcon />
-                        <span>Profile settings</span>
+                        <span>Profilio nustatymas</span>
                     </Link>
                     
                 </div>

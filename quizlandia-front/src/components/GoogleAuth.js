@@ -15,7 +15,7 @@ const GoogleAuth = () => {
 
     return (
         <div>
-            <Button variant="contained" color="primary" onClick={authenticate}>Authenticate with Google</Button>
+            <Button variant="contained" color="primary" onClick={authenticate}>Google autentifikacija</Button>
             {error && <text style={{ color: 'red', textAlign: 'center' }}>{error}</text>}
         </div>
     );

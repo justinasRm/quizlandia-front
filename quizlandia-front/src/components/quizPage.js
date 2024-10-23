@@ -74,11 +74,11 @@ const QuizPage = () => {
             <div>
                 <div className='quiz-types'>
 
-                    <span>Quiz type:</span>
+                    <span>Klausimyno tipas:</span>
             
                     <div>
-                        <button className={currentQuizIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}> Manual </button>
-                        <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}> AI </button>
+                        <button className={currentQuizIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}>Rankinis</button>
+                        <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}>AI</button>
                     </div>
 
                 </div>
@@ -87,15 +87,15 @@ const QuizPage = () => {
             </div>
 
             <div className='question-helpers'>
-                <button id='add-new-question' disabled={!isFormValid} onClick={addQuestion}>Add question</button>
-                <button id='reset-question' onClick={resetQuiz}>Reset</button>
+                <button id='add-new-question' disabled={!isFormValid} onClick={addQuestion}>Pridėti klausimą</button>
+                <button id='reset-question' onClick={resetQuiz}>Atnaujinti</button>
             </div>
         </div>
 
         <div className='quiz-summary-block'>
             <div>
-                <span>Questions: {createdQuestionsCount}</span>
-                <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Save quiz</button>
+                <span>Klausimai: {createdQuestionsCount}</span>
+                <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Išsaugoti klausimyną</button>
             </div>
             <div className='created-questions'>
                 <QuizQuestions ref={questionsRef}  onUpdateQuestions={updateCreatedQuestions} />

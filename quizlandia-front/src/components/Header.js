@@ -11,7 +11,7 @@ const Header = () => {
                 <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                     <h2>Quizlandia</h2>
                 </Link>
-                <Button variant="contained" color="primary" onClick={()=>logOut()}>Log out</Button>
+                <Button variant="contained" color="primary" onClick={()=>logOut()}>Atsijungti</Button>
             </nav>
         </header>
     );
