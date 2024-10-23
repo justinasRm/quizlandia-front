@@ -1,5 +1,10 @@
 .vs/
 
+# Ignore sensitive login to db
+quizlandia-back/appsettings.json
+quizlandia-back/appsettings.Development.json
+quizlandia-back/Migrations
+
 # Ignore the bin and obj folders
 quizlandia-back/bin/
 quizlandia-back/obj/
