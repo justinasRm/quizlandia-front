@@ -12,6 +12,9 @@ namespace quizlandia_back.Models
         public virtual DbSet<Quiz> Quizzes { get; set; }
         public virtual DbSet<QuizQuestion> QuizQuestions { get; set; }
         public virtual DbSet<QuizAnswer> QuizAnswers { get; set; }
+        public virtual DbSet<UserInfo> UserInfos { get; set; }
+        public virtual DbSet<QuizSolved> QuizSolveds { get; set; }
+        public virtual DbSet<QuestionSolved> QuestionSolveds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,16 +34,20 @@ namespace quizlandia_back.Models
                 entity.HasKey(e => e.AnswerID);
             });
 
-            // Configure relationships
-            modelBuilder.Entity<QuizQuestion>()
-                .HasOne(q => q.Quiz)
-                .WithMany(qz => qz.Questions)
-                .HasForeignKey(q => q.QuizID);
+            modelBuilder.Entity<UserInfo>(entity =>
+            {
+                entity.HasKey(e => e.UserID);
+            });
 
-            modelBuilder.Entity<QuizAnswer>()
-                .HasOne(a => a.Question)
-                .WithMany(q => q.Answers)
-                .HasForeignKey(a => a.QuestionID);
+            modelBuilder.Entity<QuizSolved>(entity =>
+            {
+                entity.HasKey(e => e.QuizSolvedID);
+            });
+
+            modelBuilder.Entity<QuestionSolved>(entity =>
+            {
+                entity.HasKey(e => e.QuestionSolvedID);
+            });
 
             OnModelCreatingPartial(modelBuilder);
         }

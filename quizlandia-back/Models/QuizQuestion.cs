@@ -12,9 +12,6 @@ namespace quizlandia_back.Models
         [Required]
         public int QuizID { get; set; }
 
-        [ForeignKey("QuizID")]
-        public virtual Quiz Quiz { get; set; }
-
         [Required]
         [MaxLength(500)] // Specify the max length as needed
         public string QuestionText { get; set; }
