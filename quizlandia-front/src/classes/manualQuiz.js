@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import React, { Component } from 'react';
 
 /*
@@ -29,7 +30,7 @@ class ManualQuiz extends Component{
                 <div className='new-question-block'>
                     <div>
                         <div>
-                            <span>Question</span>
+                            <span>Klausimas</span>
                         </div>
                         <textarea placeholder='Enter your question here.' value={questionText} onChange={this.handleQuestionChange}></textarea>
                     </div>
@@ -37,7 +38,7 @@ class ManualQuiz extends Component{
                         this.createAnswerComponent(answer, index)
                     )}
                 </div>
-                <button id='add-new-answer' onClick={this.addNewAnswer}>Add new answer</button>
+                <Button id='add-new-answer' onClick={this.addNewAnswer}>Pridėti galimą atsakymą</Button>
             </>
         );
     }
@@ -128,13 +129,13 @@ class ManualQuiz extends Component{
         return (
             <div className='answer-card' key={answer.id}>
                 <div>
-                    <span>Answer {answer.id}</span>
+                    <span>Atsakymas {answer.id}</span>
                     <div>
-                        <label>Correct</label>
+                        <label>Ar teisingas?</label>
                         <input type='checkbox' checked={answer.isCorrect} onChange={() => this.handleCheckboxChange(index)}></input>
                     </div>
                 </div>
-                <textarea placeholder='Enter your answer here.' value={answer.text} onChange={(e) => this.handleAnswerChange(index, e)}></textarea>
+                <textarea placeholder='Įveskite galimą atsakymą čia.' value={answer.text} onChange={(e) => this.handleAnswerChange(index, e)}></textarea>
             </div>
         );
     }

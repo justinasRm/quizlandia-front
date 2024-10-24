@@ -1,1 +1,0 @@
-export const backEndpoint = 'http://localhost:5000';

@@ -8,6 +8,9 @@ import { auth } from './firebaseConfig';
 import MainPage from './components/mainPage';
 import QuizPage from './components/quizPage';
 import Header from './components/Header';
+import SearchPage from './components/searchPage';
+import SolveQuiz from './components/solveQuiz';
+
 
 const theme = createTheme({
     palette: {
@@ -72,10 +75,13 @@ function App() {
                 <Router>
                     {idToken && <Header />}
 
-                    <div style={{ maxWidth: "1440px", margin: "auto" }}>
+                    <div style={{ maxWidth: "90%", margin: "auto" }}>
                         <Routes>
                             <Route path="/" element={idToken ? <MainPage /> : <Auth setUid={setUid} />} />
                             <Route path="/quiz-creation" element={idToken ? <QuizPage /> : <Auth setUid={setUid} />} />
+                            <Route path="/search-quizzes" element={idToken ? <SearchPage /> : <Auth setUid={setUid} />} />
+                            <Route path="/quiz/:id" element={idToken ? <SolveQuiz /> : <Auth setUid={setUid} />} />
+
                         </Routes>
                     </div>
                 </Router>

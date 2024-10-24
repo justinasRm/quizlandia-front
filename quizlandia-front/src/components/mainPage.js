@@ -40,7 +40,7 @@ const MainPage = () => {
 
                     <Link to="/settings">
                         <SettingsIcon />
-                        <span>Profilio nustatymas</span>
+                        <span>Profilio nustatymai</span>
                     </Link>
                     
                 </div>
