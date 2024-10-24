@@ -27,6 +27,11 @@ namespace quizlandia_back.Models
         [Required]
         public int Status { get; set; }
 
+        [Required]
+        [MaxLength(10)]
+        public string QuizCode { get; set; }
+
+
         // Add this navigation property
         public virtual ICollection<QuizQuestion> Questions { get; set; }
     }
