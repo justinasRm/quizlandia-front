@@ -25,31 +25,7 @@ namespace quizlandia_back
         [MaxLength(10)]
         public string QuizCode { get; set; }
 
-        public List<CreateQuizQuestionDto> Questions { get; set; }
-    }
-
-    public class CreateQuizQuestionDto
-    {
         [Required]
-        [MaxLength(500)]
-        public string QuestionText { get; set; }
-
-        [Required]
-        public int QuestionOrder { get; set; }
-
-        [Required]
-        public int QuestionType { get; set; }
-
-        public List<CreateQuizAnswerDto> Answers { get; set; }
-    }
-
-    public class CreateQuizAnswerDto
-    {
-        [Required]
-        [MaxLength(500)]
-        public string AnswerText { get; set; }
-
-        [Required]
-        public bool IsCorrect { get; set; }
+        public TimeSpan TimeLimit { get; set; }
     }
 }

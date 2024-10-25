@@ -19,7 +19,7 @@ namespace quizlandia_back.Models
         public string Email { get; set; }
 
         [Required]
-        public bool AccountType { get; set; }
+        public int AccountType { get; set; }
 
         [Required]
         public DateTime CreatedDate { get; set; }

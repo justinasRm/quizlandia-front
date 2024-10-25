@@ -24,5 +24,6 @@ namespace quizlandia_back.Models
 
         // Add this navigation property
         public virtual ICollection<QuizAnswer> Answers { get; set; }
+
     }
 }

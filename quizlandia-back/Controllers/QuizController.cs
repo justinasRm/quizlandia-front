@@ -19,6 +19,64 @@ namespace quizlandia_back.Controllers
             _context = context;
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetAllQuizes()
+        {
+            var quiz = await _context.Quizzes.ToListAsync();
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(quiz);
+        }
+
+        // GET: api/Quizzes/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetQuizById(int id)
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions)
+                    .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync(q => q.QuizID == id);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(quiz);
+        }
+
+        [HttpGet("quizCode/{quizCode}")]
+        public async Task<IActionResult> GetQuizByCode(string quizCode)
+        {
+            var quiz = await _context.Quizzes.FirstOrDefaultAsync(q => q.QuizCode == quizCode);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(quiz);
+        }
+
+        [HttpGet("full")]
+        public async Task<IActionResult> GetAllQuizesFull()
+        {
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions)
+                    .ThenInclude(q => q.Answers).ToListAsync();
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(quiz);
+        }
+
         // POST: api/Quizzes
         [HttpPost]
         public async Task<IActionResult> CreateQuiz([FromBody] CreateQuizDto createQuizDto)
@@ -46,17 +104,7 @@ namespace quizlandia_back.Controllers
                 Status = createQuizDto.Status,
                 QuizCode = createQuizDto.QuizCode,
                 SolvedCount = 0,
-                Questions = createQuizDto.Questions?.Select(q => new QuizQuestion
-                {
-                    QuestionText = q.QuestionText,
-                    QuestionOrder = q.QuestionOrder,
-                    QuestionType = q.QuestionType,
-                    Answers = q.Answers?.Select(a => new QuizAnswer
-                    {
-                        AnswerText = a.AnswerText,
-                        IsCorrect = a.IsCorrect
-                    }).ToList()
-                }).ToList()
+                TimeLimit = createQuizDto.TimeLimit
             };
 
             _context.Quizzes.Add(quiz);
@@ -64,51 +112,6 @@ namespace quizlandia_back.Controllers
 
 
             return CreatedAtAction(nameof(GetQuizById), new { id = quiz.QuizID }, quiz);
-        }
-
-        // GET: api/Quizzes/{id}
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetQuizById(int id)
-        {
-            var quiz = await _context.Quizzes
-                .Include(q => q.Questions)
-                    .ThenInclude(q => q.Answers)
-                .FirstOrDefaultAsync(q => q.QuizID == id);
-
-            if (quiz == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(quiz);
-        }
-
-        [HttpGet("full")]
-        public async Task<IActionResult> GetAllQuizesFull()
-        {
-            var quiz = await _context.Quizzes
-                .Include(q => q.Questions)
-                    .ThenInclude(q => q.Answers).ToListAsync();
-
-            if (quiz == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(quiz);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetAllQuizes()
-        {
-            var quiz = await _context.Quizzes.ToListAsync();
-
-            if (quiz == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(quiz);
         }
     }
 }

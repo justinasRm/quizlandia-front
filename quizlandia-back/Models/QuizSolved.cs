@@ -16,5 +16,7 @@ public class QuizSolved
 
     [Required]
     public int CorrectAnswerCount { get; set; }
+    [Required]
+    public TimeSpan TimeTaken { get; set; }
 }
 

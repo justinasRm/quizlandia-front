@@ -20,6 +20,6 @@ namespace quizlandia_back
         public string Email { get; set; }
 
         [Required]
-        public bool AccountType { get; set; }
+        public int AccountType { get; set; }
     }
 }

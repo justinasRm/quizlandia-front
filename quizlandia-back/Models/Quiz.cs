@@ -32,6 +32,8 @@ public class Quiz
     public string QuizCode { get; set; }
 
     public int SolvedCount { get; set; }
+    [Required]
+    public TimeSpan TimeLimit { get; set; }
 
-    public virtual ICollection<QuizQuestion> Questions { get; set; }
+    public virtual List<QuizQuestion> Questions { get; set; } = new List<QuizQuestion>();
 }
