@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -10,7 +10,7 @@ import QuizPage from './components/quizPage';
 import Header from './components/Header';
 import SearchPage from './components/searchPage';
 import SolveQuiz from './components/solveQuiz';
-
+import { useDispatch, useSelector } from 'react-redux';
 
 const theme = createTheme({
     palette: {
@@ -39,8 +39,15 @@ function App() {
     const [idToken, setIdToken] = useState(null);  // Tracks the secure token
     const [loading, setLoading] = useState(true);  // Tracks loading state
 
+    const authPause = useSelector((state) => state.auth.authPause);
+    const authPauseRef = useRef(authPause);
+
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        authPauseRef.current = authPause;
+    }, [authPause])
+
+    const authStateChangeFunc = async (user) => {
+            if (authPauseRef.current) return;
             if (user) {
                 try {
                     // Fetch the user's ID token
@@ -57,13 +64,14 @@ function App() {
                 console.log('No user is signed in.');
             }
             setLoading(false);  // Set loading to false after the auth check
-        });
+        }
 
-        // Cleanup the onAuthStateChanged listener when the component unmounts
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, authStateChangeFunc);
+
         return () => unsubscribe();
     }, []);
 
-    // Loading screen while checking authentication state
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -81,7 +89,6 @@ function App() {
                             <Route path="/quiz-creation" element={idToken ? <QuizPage /> : <Auth setUid={setUid} />} />
                             <Route path="/search-quizzes" element={idToken ? <SearchPage /> : <Auth setUid={setUid} />} />
                             <Route path="/quiz/:id" element={idToken ? <SolveQuiz /> : <Auth setUid={setUid} />} />
-
                         </Routes>
                     </div>
                 </Router>

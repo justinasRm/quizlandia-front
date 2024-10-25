@@ -1,17 +1,33 @@
 import { getAuth, signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import { setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
+import { backEndpoint } from '../envs';
+import { setAuthPause } from '../authSlice';
 
-export const signupUser = async (email, password) => {
+export const signupUser = async (email, password, name, surname, accountType) => {
     try {
         await setPersistence(auth, browserLocalPersistence);
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        console.log('usercred:')
-        console.log(userCredential);
 
         const user = userCredential.user;
-        console.log('User signed up:', user);
-        // You can return the user or any other relevant information
+
+        await fetch(backEndpoint.postUser, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(
+                {
+                    userID: user.uid,
+                    name: name,
+                    surname: surname,
+                    email: email,
+                    accountType: true, // eh?
+                }
+            )
+        }).catch((error) => {
+            console.error('Error signing in:', error);
+        })
         return user;
     } catch (error) {
         console.log('ERROR')
@@ -27,7 +43,6 @@ export const signupUser = async (email, password) => {
             console.log(error);
             return {error: 'Unknown error. Try again later.'};
         }
-        throw error;
     }
 };
 
@@ -36,33 +51,49 @@ export const loginUser = async (email, password) => {
         await setPersistence(auth, browserLocalPersistence);
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log('User signed in:', user);
         // You can return the user or any other relevant information
         return user;
     } catch (error) {
-        console.log('error is:')
-        console.log(error.code)
-        console.log(error)
         if(error.code.includes('invalid-credential')){
             return {error: 'Wrong email, password or authentication method'};
         }
     }
 }
 
-export const authWithGoogle = async () => {
+export const authWithGoogle = async (dispatch) => {
     const provider = new GoogleAuthProvider();
     try {
+        let rtrn;
+        dispatch(setAuthPause(true));
+
         await setPersistence(auth, browserLocalPersistence);
         const userCredential = await signInWithPopup(auth, provider);
-        const user = userCredential.user;
-        console.log('User signed in:', user);
-        // You can return the user or any other relevant information
-        return user;
+
+        await fetch(backEndpoint.getUser + userCredential.user.uid, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).catch((error) => {
+            console.log('err THIS:')
+            console.error(error);
+        }).then((response) => {
+            if (response.statusText === 'Not Found') {
+                // new user just created. need to get his name, surname, account type
+                rtrn = {displayAdditionalInfo: true, ...userCredential.user};
+            } else {
+                rtrn = userCredential.user;
+            }
+        })
+
+        return rtrn;
     } catch (error) {
         console.log('error is:')
         console.log(error.code)
         if(error.code.includes('invalid-credential')){
             return {error: 'Wrong email or password'};
+        } else if (error.code.includes('user-canceled')) {
+            return {error: 'User cancelled the sign in'};
         }
     }
 }

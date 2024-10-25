@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { TextField, Button, Text } from '@mui/material';
+import React, { useState } from 'react';
+import { TextField, Button, Dialog } from '@mui/material';
+import { DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { signupUser } from '../functions/authFunctions';
 
 function SignUp(props) {
@@ -8,6 +9,13 @@ function SignUp(props) {
     const [password, setPassword] = useState('');
     const [repeatPassword, setRepeatPassword] = useState('');
     const [error, setError] = useState(null);
+    const [followupError, setFollowupError] = useState(null);
+    const [signupSuccessful, setSignupSuccessful] = useState(false);
+
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [accountType, setAccountType] = useState('Kūrėjas');
+
     const validateEmailFormat = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
@@ -15,22 +23,22 @@ function SignUp(props) {
 
     const validate = () => {
         if (!validateEmailFormat(email)) {
-            setError("Invalid email format");
+            setError("Netinkamas el. pašto formatas");
             return
         } else if (email !== repeatEmail) {
-            setError("Emails do not match");
+            setError("El. paštai nesutampa");
             return
         } else if (password !== repeatPassword) {
-            setError("Passwords do not match")
+            setError("Slaptažodžiai nesutampa");
             return
         } else if (password.length < 8) {
-            setError("Password must be at least 8 characters long");
+            setError("Slaptažodis turi būti bent 8 simbolių ilgio");
             return
         } else if (!/[A-Z]/.test(password)) {
-            setError('Password must contain at least one uppercase letter');
+            setError('Slaptažodyje turi būti bent viena didžioji raidė');
             return
         } else if (!/[a-z]/.test(password)) {
-            setError('Password must contain at least one lowercase letter')
+            setError('Slaptažodyje turi būti bent viena mažoji raidė');
             return
         }
         return true;
@@ -39,16 +47,29 @@ function SignUp(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (validate()) {
-            const signup = await signupUser(email, password);
+            setSignupSuccessful(true);
+        }
+    };
+
+    const handleDialogClose = async () => {
+        if (firstName === '') {
+            setFollowupError('Vardas negali būti tuščias');
+            return;
+        } else if (lastName === '') {
+            setFollowupError('Pavardė negali būti tuščia');
+            return;
+        }
+
+       const signup = await signupUser(email, password, firstName, lastName, accountType);
             if (signup.error) {
                 setError(signup.error);
+                setSignupSuccessful(false)
                 return;
             } else {
                 props.setUid(signup.uid);
-
             }
-        }
-    };
+
+  };
 
     return (
         <form onSubmit={handleSubmit} noValidate style={{ display: 'flex', flexDirection: 'column', marginBottom: '20px', width: '100%' }}>
@@ -93,12 +114,50 @@ function SignUp(props) {
                 onChange={(e) => setRepeatPassword(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
-                Sign Up
+                Registruotis
             </Button>
             <Button variant="text" color="primary" style={{ marginTop: '10px' }} onClick={() => props.setSigninFlow(true)}>
-                Already have an account? Sign In
+                Jau turi paskyrą? Prisijunk!
             </Button>
-            {error && <text style={{color: 'red', textAlign: 'center'}}>{error}</text>}
+            {error && <text style={{ color: 'red', textAlign: 'center' }}>{error}</text>}
+        <Dialog open={signupSuccessful} onClose={handleDialogClose}>
+        <DialogTitle>Papildoma informacija</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Vardas"
+            required
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Pavardė"
+            required
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <FormControl fullWidth margin="normal">
+            <InputLabel>Paskyros tipas</InputLabel>
+            <Select
+              value={accountType}
+              onChange={(e) => setAccountType(e.target.value)}
+            >
+              <MenuItem value="Kūrėjas">Kūrėjas</MenuItem>
+              <MenuItem value="Sprendėjas">Sprendėjas</MenuItem>
+            </Select>
+                    </FormControl>
+            {followupError && <h6 style={{ color: 'red', textAlign: 'center', margin: 10, fontSize: 15 }}>{followupError}</h6>}
+                    
+        </DialogContent>
+                <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            Sukurti paskyrą
+          </Button>
+        </DialogActions>
+      </Dialog>
         </form>
     );
 }
