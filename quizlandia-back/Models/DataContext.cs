@@ -14,7 +14,7 @@ namespace quizlandia_back.Models
         public virtual DbSet<QuizAnswer> QuizAnswers { get; set; }
         public virtual DbSet<UserInfo> UserInfos { get; set; }
         public virtual DbSet<QuizSolved> QuizSolveds { get; set; }
-       // public virtual DbSet<QuestionSolved> QuestionSolveds { get; set; }
+        public virtual DbSet<QuestionSolved> QuestionSolveds { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,10 +45,10 @@ namespace quizlandia_back.Models
             });
 
             // Updated configuration for QuestionSolved
-            //modelBuilder.Entity<QuestionSolved>(entity =>
-            //{
-             //   entity.HasKey(e => e.QuestionSolvedID);
-            //});
+            modelBuilder.Entity<QuestionSolved>(entity =>
+            {
+               entity.HasKey(e => e.QSID);
+            });
 
 
             OnModelCreatingPartial(modelBuilder);

@@ -17,7 +17,7 @@ namespace quizlandia_back.Controllers
         {
             _context = context;
         }
-
+        
         // POST: api/QuestionSolved
         [HttpPost]
         public async Task<IActionResult> CreateQuestionSolved([FromBody] CreateQuestionSolvedDto createQuestionSolvedDto)
@@ -40,20 +40,12 @@ namespace quizlandia_back.Controllers
             {
                 return NotFound($"Question of this solved quiz with ID {createQuestionSolvedDto.QuestionID} not found.");
             }
-
-            // Check if the Solver (user) exists
-            var solver = await _context.UserInfos.FindAsync(createQuestionSolvedDto.SolverID);
-            if (solver == null)
-            {
-                return NotFound($"User with ID '{createQuestionSolvedDto.SolverID}' not found.");
-            }
-
+            
             // Create new QuestionSolved entity
             var questionSolved = new QuestionSolved
             {
                 QuestionID = createQuestionSolvedDto.QuestionID,
                 QuizSolvedID = createQuestionSolvedDto.QuizSolvedID,
-                SolverID = createQuestionSolvedDto.SolverID,
                 CorrectlySolved = createQuestionSolvedDto.CorrectlySolved
             };
 
@@ -61,14 +53,14 @@ namespace quizlandia_back.Controllers
             _context.QuestionSolveds.Add(questionSolved);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetQuestionSolvedById), new { questionId = questionSolved.QuestionID, quizSolvedId = questionSolved.QuizSolvedID }, questionSolved);
+            return Ok(questionSolved);
         }
 
         // GET: api/QuestionSolved/{id}
         [HttpGet("{questionId}/{quizSolvedId}")]
-        public async Task<IActionResult> GetQuestionSolvedById(int questionId, int quizSolvedId)
+        public async Task<IActionResult> GetQuestionSolvedById(int QSID)
         {
-            var questionSolved = await _context.QuestionSolveds.FindAsync(questionId, quizSolvedId);
+            var questionSolved = await _context.QuestionSolveds.FindAsync(QSID);
 
             if (questionSolved == null)
             {
@@ -79,7 +71,6 @@ namespace quizlandia_back.Controllers
             {
                 QuestionID = questionSolved.QuestionID,
                 QuizSolvedID = questionSolved.QuizSolvedID,
-                SolverID = questionSolved.SolverID,
                 CorrectlySolved = questionSolved.CorrectlySolved
             };
 
@@ -97,7 +88,6 @@ namespace quizlandia_back.Controllers
                 {
                     QuestionID = qs.QuestionID,
                     QuizSolvedID = qs.QuizSolvedID,
-                    SolverID = qs.SolverID,
                     CorrectlySolved = qs.CorrectlySolved
                 })
                 .ToListAsync();
@@ -108,52 +98,6 @@ namespace quizlandia_back.Controllers
             }
 
             return Ok(questionsSolved);
-        }
-
-        // GET: api/QuestionSolved/BySolver/{solverId}
-        [HttpGet("BySolver/{solverId}")]
-        public async Task<IActionResult> GetQuestionsSolvedBySolverId(string solverId)
-        {
-            var questionsSolved = await _context.QuestionSolveds
-                .Where(qs => qs.SolverID == solverId)
-                .Select(qs => new QuestionSolvedDto
-                {
-                    QuestionID = qs.QuestionID,
-                    QuizSolvedID = qs.QuizSolvedID,
-                    SolverID = qs.SolverID,
-                    CorrectlySolved = qs.CorrectlySolved
-                })
-                .ToListAsync();
-
-            if (!questionsSolved.Any())
-            {
-                return NotFound($"No questions solved found for SolverID '{solverId}'.");
-            }
-
-            return Ok(questionsSolved);
-        }
-
-        // GET: api/QuestionSolved/ByQuizSolvedAndSolver/{quizSolvedId}/{solverId}
-        [HttpGet("ByQuizSolvedAndSolver/{quizSolvedId}/{solverId}")]
-        public async Task<IActionResult> GetQuestionSolvedByQuizSolvedAndSolver(int quizSolvedId, string solverId)
-        {
-            var questionSolved = await _context.QuestionSolveds
-                .FirstOrDefaultAsync(qs => qs.QuizSolvedID == quizSolvedId && qs.SolverID == solverId);
-
-            if (questionSolved == null)
-            {
-                return NotFound($"No question solved found for QuizSolvedID {quizSolvedId} and SolverID '{solverId}'.");
-            }
-
-            var questionSolvedDto = new QuestionSolvedDto
-            {
-                QuestionID = questionSolved.QuestionID,
-                QuizSolvedID = questionSolved.QuizSolvedID,
-                SolverID = questionSolved.SolverID,
-                CorrectlySolved = questionSolved.CorrectlySolved
-            };
-
-            return Ok(questionSolvedDto);
         }
     }
 }

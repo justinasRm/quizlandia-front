@@ -8,7 +8,6 @@ namespace quizlandia_back
     {
         public int QuizSolvedID { get; set; }
         public int QuestionID { get; set; }
-        public string SolverID { get; set; }
         public bool CorrectlySolved { get; set; }
     }
 }

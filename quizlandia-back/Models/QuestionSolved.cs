@@ -1,20 +1,18 @@
-﻿using quizlandia_back.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class QuestionSolved
+namespace quizlandia_back.Models
 {
-    [Key]
-    public int QuestionSolvedID { get; set; }
+    public class QuestionSolved
+    {
+        [Key]
+        public int QSID { get; set; }
+        [Required]
+        public int QuestionID { get; set; }
 
-    [Required]
-    public int QuestionID { get; set; }
+        [Required]
+        public int QuizSolvedID { get; set; }
 
-    [Required]
-    public int QuizSolvedID { get; set; }
-
-    [Required]
-    public string SolverID { get; set; }
-
-    [Required]
-    public bool CorrectlySolved { get; set; }
+        [Required]
+        public bool CorrectlySolved { get; set; }
+    }
 }

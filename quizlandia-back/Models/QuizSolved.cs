@@ -20,6 +20,6 @@ public class QuizSolved
     public DateTime CreatedDate { get; set; }
     [Required]
     public TimeSpan TimeTaken { get; set; }
-    public virtual ICollection<QuestionSolved> QuestionsSolved { get; set; } = new List<QuestionSolved>();
+    //public virtual ICollection<QuestionSolved> QuestionsSolved { get; set; } = new List<QuestionSolved>();
 }
 

@@ -9,8 +9,6 @@ namespace quizlandia_back
         [Required]
         public int QuizSolvedID { get; set; }
         [Required]
-        public string SolverID { get; set; }
-        [Required]
         public bool CorrectlySolved { get; set; }
     }
 }
