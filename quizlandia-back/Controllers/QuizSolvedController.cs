@@ -46,6 +46,7 @@ namespace quizlandia_back.Controllers
                 QuizID = createQuizSolvedDto.QuizID,
                 SolverID = createQuizSolvedDto.SolverID,
                 CorrectAnswerCount = createQuizSolvedDto.CorrectAnswerCount,
+                CreatedDate = DateTime.UtcNow,
                 TimeTaken = createQuizSolvedDto.TimeTaken
             };
 
@@ -75,7 +76,8 @@ namespace quizlandia_back.Controllers
                 QuizID = quizSolved.QuizID,
                 SolverID = quizSolved.SolverID,
                 CorrectAnswerCount = quizSolved.CorrectAnswerCount,
-                TimeTaken = quizSolved.TimeTaken
+                TimeTaken = quizSolved.TimeTaken,
+                CreatedDate = quizSolved.CreatedDate
             };
 
             return Ok(quizSolvedDto);
@@ -92,7 +94,8 @@ namespace quizlandia_back.Controllers
                     QuizID = qs.QuizID,
                     SolverID = qs.SolverID,
                     CorrectAnswerCount = qs.CorrectAnswerCount,
-                    TimeTaken = qs.TimeTaken
+                    TimeTaken = qs.TimeTaken,
+                    CreatedDate = qs.CreatedDate
                 })
                 .ToListAsync();
             
@@ -116,7 +119,8 @@ namespace quizlandia_back.Controllers
                     QuizID = qs.QuizID,
                     SolverID = qs.SolverID,
                     CorrectAnswerCount = qs.CorrectAnswerCount,
-                    TimeTaken = qs.TimeTaken
+                    TimeTaken = qs.TimeTaken,
+                    CreatedDate = qs.CreatedDate
                 })
                 .ToListAsync();
 
@@ -146,7 +150,8 @@ namespace quizlandia_back.Controllers
                 QuizID = quizSolved.QuizID,
                 SolverID = quizSolved.SolverID,
                 CorrectAnswerCount = quizSolved.CorrectAnswerCount,
-                TimeTaken = quizSolved.TimeTaken
+                TimeTaken = quizSolved.TimeTaken,
+                CreatedDate = quizSolved.CreatedDate
             };
 
             return Ok(quizSolvedDto);

@@ -34,6 +34,13 @@ namespace quizlandia_back.Controllers
                 return NotFound($"QuizSolved with ID {createQuestionSolvedDto.QuizSolvedID} not found.");
             }
 
+            // Check if the QuizQuestion exists
+            var quizQuestion = await _context.QuizQuestions.FindAsync(createQuestionSolvedDto.QuestionID);
+            if (quizSolved == null)
+            {
+                return NotFound($"Question of this solved quiz with ID {createQuestionSolvedDto.QuestionID} not found.");
+            }
+
             // Check if the Solver (user) exists
             var solver = await _context.UserInfos.FindAsync(createQuestionSolvedDto.SolverID);
             if (solver == null)
@@ -44,6 +51,7 @@ namespace quizlandia_back.Controllers
             // Create new QuestionSolved entity
             var questionSolved = new QuestionSolved
             {
+                QuestionID = createQuestionSolvedDto.QuestionID,
                 QuizSolvedID = createQuestionSolvedDto.QuizSolvedID,
                 SolverID = createQuestionSolvedDto.SolverID,
                 CorrectlySolved = createQuestionSolvedDto.CorrectlySolved
@@ -53,23 +61,14 @@ namespace quizlandia_back.Controllers
             _context.QuestionSolveds.Add(questionSolved);
             await _context.SaveChangesAsync();
 
-            // Prepare response DTO
-            var questionSolvedDto = new QuestionSolvedDto
-            {
-                QuestionSolvedID = questionSolved.QuestionSolvedID,
-                QuizSolvedID = questionSolved.QuizSolvedID,
-                SolverID = questionSolved.SolverID,
-                CorrectlySolved = questionSolved.CorrectlySolved
-            };
-
-            return CreatedAtAction(nameof(GetQuestionSolvedById), new { id = questionSolved.QuestionSolvedID }, questionSolvedDto);
+            return CreatedAtAction(nameof(GetQuestionSolvedById), new { questionId = questionSolved.QuestionID, quizSolvedId = questionSolved.QuizSolvedID }, questionSolved);
         }
 
         // GET: api/QuestionSolved/{id}
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetQuestionSolvedById(int id)
+        [HttpGet("{questionId}/{quizSolvedId}")]
+        public async Task<IActionResult> GetQuestionSolvedById(int questionId, int quizSolvedId)
         {
-            var questionSolved = await _context.QuestionSolveds.FindAsync(id);
+            var questionSolved = await _context.QuestionSolveds.FindAsync(questionId, quizSolvedId);
 
             if (questionSolved == null)
             {
@@ -78,7 +77,7 @@ namespace quizlandia_back.Controllers
 
             var questionSolvedDto = new QuestionSolvedDto
             {
-                QuestionSolvedID = questionSolved.QuestionSolvedID,
+                QuestionID = questionSolved.QuestionID,
                 QuizSolvedID = questionSolved.QuizSolvedID,
                 SolverID = questionSolved.SolverID,
                 CorrectlySolved = questionSolved.CorrectlySolved
@@ -86,6 +85,7 @@ namespace quizlandia_back.Controllers
 
             return Ok(questionSolvedDto);
         }
+
 
         // GET: api/QuestionSolved/ByQuizSolved/{quizSolvedId}
         [HttpGet("ByQuizSolved/{quizSolvedId}")]
@@ -95,7 +95,7 @@ namespace quizlandia_back.Controllers
                 .Where(qs => qs.QuizSolvedID == quizSolvedId)
                 .Select(qs => new QuestionSolvedDto
                 {
-                    QuestionSolvedID = qs.QuestionSolvedID,
+                    QuestionID = qs.QuestionID,
                     QuizSolvedID = qs.QuizSolvedID,
                     SolverID = qs.SolverID,
                     CorrectlySolved = qs.CorrectlySolved
@@ -118,7 +118,7 @@ namespace quizlandia_back.Controllers
                 .Where(qs => qs.SolverID == solverId)
                 .Select(qs => new QuestionSolvedDto
                 {
-                    QuestionSolvedID = qs.QuestionSolvedID,
+                    QuestionID = qs.QuestionID,
                     QuizSolvedID = qs.QuizSolvedID,
                     SolverID = qs.SolverID,
                     CorrectlySolved = qs.CorrectlySolved
@@ -147,7 +147,7 @@ namespace quizlandia_back.Controllers
 
             var questionSolvedDto = new QuestionSolvedDto
             {
-                QuestionSolvedID = questionSolved.QuestionSolvedID,
+                QuestionID = questionSolved.QuestionID,
                 QuizSolvedID = questionSolved.QuizSolvedID,
                 SolverID = questionSolved.SolverID,
                 CorrectlySolved = questionSolved.CorrectlySolved

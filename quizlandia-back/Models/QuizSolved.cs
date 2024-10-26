@@ -17,6 +17,9 @@ public class QuizSolved
     [Required]
     public int CorrectAnswerCount { get; set; }
     [Required]
+    public DateTime CreatedDate { get; set; }
+    [Required]
     public TimeSpan TimeTaken { get; set; }
+    public virtual ICollection<QuestionSolved> QuestionsSolved { get; set; } = new List<QuestionSolved>();
 }
 

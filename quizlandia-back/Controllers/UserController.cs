@@ -67,5 +67,31 @@ namespace quizlandia_back.Controllers
 
             return Ok(user);
         }
+
+        [HttpGet("{id}/stats/student")]
+        public async Task<IActionResult> GetUserStudentStats(string id)
+        {
+            var user = await _context.UserInfos.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
+
+        [HttpGet("{id}/stats/teacher")]
+        public async Task<IActionResult> GetUserTeacherStats(string id)
+        {
+            var user = await _context.UserInfos.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(user);
+        }
     }
 }

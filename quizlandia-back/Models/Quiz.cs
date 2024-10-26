@@ -23,6 +23,8 @@ public class Quiz
 
     [Required]
     public DateTime CreatedDate { get; set; }
+    [Required]
+    public DateTime LastUpdateDate { get; set; }
 
     [Required]
     public int Status { get; set; }

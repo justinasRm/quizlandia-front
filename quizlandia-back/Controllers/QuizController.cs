@@ -101,6 +101,7 @@ namespace quizlandia_back.Controllers
                 Title = createQuizDto.Title,
                 Description = createQuizDto.Description,
                 CreatedDate = DateTime.UtcNow,
+                LastUpdateDate = DateTime.UtcNow,
                 Status = createQuizDto.Status,
                 QuizCode = createQuizDto.QuizCode,
                 SolvedCount = 0,

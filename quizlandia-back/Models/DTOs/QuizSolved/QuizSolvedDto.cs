@@ -11,5 +11,6 @@ namespace quizlandia_back
         public string SolverID { get; set; }
         public int CorrectAnswerCount { get; set; }
         public TimeSpan TimeTaken { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }
