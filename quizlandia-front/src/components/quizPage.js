@@ -3,6 +3,8 @@ import './quizPage.css';
 import QuizQuestions from './../classes/quizQuestions';
 import ManualQuiz from './../classes/manualQuiz';
 import AiQuiz from './../classes/aiQuiz';
+import { TextField } from '@mui/material';
+import { generateRandomCode } from '../functions/generateRandomCode';
 
 const QuizPage = () => {
 
@@ -13,6 +15,11 @@ const QuizPage = () => {
     const [currentQuizIndex, setQuizIndex] = useState(0);
     const [createdQuestionsCount, setQuestionCount] = useState(0);
     const [isFormValid, setFormValidity] = useState(false);
+    const [quizName, setQuizName] = useState('');
+    const [quizDesc, setQuizDesc] = useState('');
+    const [timeLimit, setTimeLimit] = useState('');
+    const [quizCode, setQuizCode] = useState(generateRandomCode());
+    const [error, setError] = useState('');
 
     useEffect(() => {
         if(questionsRef.current) {
@@ -70,8 +77,30 @@ const QuizPage = () => {
   
     return (
       <div className='quiz-page-container'>
-        <div className='quiz-creation-block'>
-            <div>
+            <div className='quiz-creation-block'>
+                {error && <span style={{color: 'red'}}>{error}</span>}
+                <div>
+                    <div className='quiz-info'>
+                    <span>Klausimyno pavadinimas</span>
+                    <TextField value={quizName} onChange={(e)=>{
+                        setQuizName(e.target.value);
+                    }}></TextField>
+                </div>
+                <div className='quiz-info'>
+                        <span>Klausimyno aprašymas</span>
+                             <TextField value={quizDesc} onChange={(e)=>{
+                        setQuizDesc(e.target.value);
+                    }}></TextField>
+                        
+                </div>
+                <div className='quiz-info'>
+                    <span>Laiko limitas sekundėmis(palikite tuščią, jei nepritaikyti)</span>
+                    <TextField type='number' value={timeLimit} onChange={(e)=>{setTimeLimit(e.target.value)}}></TextField>
+                </div>
+                    <div className='quiz-info'>
+                    <span>Klausimyno kodas(10 simbolių limitas)</span>
+                    <TextField value={quizCode} onChange={(e)=>{setQuizCode(e.target.value)}}></TextField>
+                </div>
                 <div className='quiz-types'>
 
                     <span>Klausimyno tipas:</span>
@@ -81,7 +110,8 @@ const QuizPage = () => {
                         <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}>AI</button>
                     </div>
 
-                </div>
+                    </div>
+                 
 
                 {renderQuizComponent()}
             </div>
@@ -98,7 +128,7 @@ const QuizPage = () => {
                 <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Išsaugoti klausimyną</button>
             </div>
             <div className='created-questions'>
-                <QuizQuestions ref={questionsRef}  onUpdateQuestions={updateCreatedQuestions} />
+                <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} setError={setError} onUpdateQuestions={updateCreatedQuestions} />
             </div>
         </div>
       </div>

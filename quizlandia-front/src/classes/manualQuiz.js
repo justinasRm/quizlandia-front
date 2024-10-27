@@ -1,4 +1,4 @@
-import { Button } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import React, { Component } from 'react';
 
 /*
@@ -32,7 +32,7 @@ class ManualQuiz extends Component{
                         <div>
                             <span>Klausimas</span>
                         </div>
-                        <textarea placeholder='Enter your question here.' value={questionText} onChange={this.handleQuestionChange}></textarea>
+                        <TextField fullWidth={true} placeholder='Įveskite klausimą čia.' value={questionText} onChange={this.handleQuestionChange}></TextField>
                     </div>
                     {answers.map((answer, index) => 
                         this.createAnswerComponent(answer, index)
@@ -135,7 +135,7 @@ class ManualQuiz extends Component{
                         <input type='checkbox' checked={answer.isCorrect} onChange={() => this.handleCheckboxChange(index)}></input>
                     </div>
                 </div>
-                <textarea placeholder='Įveskite galimą atsakymą čia.' value={answer.text} onChange={(e) => this.handleAnswerChange(index, e)}></textarea>
+                <TextField fullWidth={true} placeholder='Įveskite galimą atsakymą čia.' value={answer.text} onChange={(e) => this.handleAnswerChange(index, e)}></TextField>
             </div>
         );
     }

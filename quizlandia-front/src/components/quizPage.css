@@ -16,6 +16,20 @@
     gap: 20px;
     border-bottom: 1px solid rgb(203 213 225);
 }
+.quiz-info > input{
+    width: 100px;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: rgb(241 245 249);
+    border: 1px solid rgb(203 213 225);
+    outline: none;
+}
+
+.quiz-info{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
 .quiz-creation-block > div > span{
     font-weight: 600;
