@@ -115,6 +115,25 @@ class QuizQuestions extends Component{
 
         this.props.setError('');
 
+        try {
+            const response = await fetch(backEndpoint.getQuizByCode + this.props.quizCode, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            });
+
+            console.log('response:', response.status);
+            if(response.status === 200){
+                this.props.setError('Toks kodas jau egzistuoja. Pakeiskite kodą.');
+                return;
+            } else if(response.status === 404){
+                this.props.setError('');
+            }
+        } catch (err) {
+            this.props.setError('Klaida išsaugant klausimyną. Pabandykite vėliau.');
+            return;
+        }
         const postQuizObj = {};
 
         postQuizObj.creatorId = 'string';
@@ -170,47 +189,44 @@ class QuizQuestions extends Component{
         }
 
         
-        return;
-
+        // .postAnswers
+        const questionsToSend = {"questions": []};
         questions.map((question, index) => {
-            // console.log('question ' + index)
-            // console.log(question)
-
-
-
-            // postAnswers + quizCode
-            //             {
-            //   "questions": [
-            //     {
-            //       "questionText": "string",
-            //       "questionOrder": 0,
-            //       "questionType": 0,
-            //       "answers": [
-            //         {
-            //           "answerText": "string",
-            //           "isCorrect": true
-            //         }
-            //       ]
-            //     }
-            //   ]
-            // }
             let currentQuestion = {
                 //TODO check if ID needed
                 // id: question.id,
-                order: index + 1,
-                question: question.text,
+                questionOrder: index + 1,
+                questionType: 0,
+                questionText: question.text,
                 answers: question.answers.map((answer, ansIndex) => ({
                     //TODO check if ID needed
                     // id: answer.id,
-                    order: ansIndex + 1,
-                    text: answer.text,
+                    answerText: answer.text,
                     isCorrect: answer.isCorrect,
                 }))
             }
-            console.log(currentQuestion)
-
-            // quizToSend.push(currentQuestion);
+            questionsToSend.questions.push(currentQuestion);
         });
+
+
+        try {
+            const response = await fetch(backEndpoint.postAnswers + this.props.quizCode, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(questionsToSend)
+            });
+
+            console.log('response:', response.status);
+           
+        } catch (err) {
+            this.props.setError('Klaida išsaugant atsakymus. Pabandykite vėliau.');
+            return;
+        }
+
+        this.props.setConfirmation('Klausimynas sėkmingai išsaugotas!');
+        return;
     }
 }
 

@@ -8,7 +8,7 @@ function SolveQuiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({});
 
     useEffect(() => {
-        fetch(backEndpoint.getOneQuiz + 5, {
+        fetch(backEndpoint.getOneQuiz + 3, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -42,7 +42,7 @@ function SolveQuiz() {
       <div>
       <Typography variant="h4" component="h1" gutterBottom style={{textAlign: 'center'}}>Klausimynas: {quizData.title}</Typography>
         
-      {quizData.questions.map(question => (
+      {quizData && quizData.questions && quizData.questions.map(question => (
         <Card key={question.questionID} variant="outlined" style={{ marginBottom: '20px' }}>
           <CardContent>
             <FormControl component="fieldset">

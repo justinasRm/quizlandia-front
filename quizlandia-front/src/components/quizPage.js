@@ -3,14 +3,17 @@ import './quizPage.css';
 import QuizQuestions from './../classes/quizQuestions';
 import ManualQuiz from './../classes/manualQuiz';
 import AiQuiz from './../classes/aiQuiz';
-import { TextField } from '@mui/material';
+import { TextField, Slide, Dialog, Button } from '@mui/material';
 import { generateRandomCode } from '../functions/generateRandomCode';
+import { useNavigate } from 'react-router-dom';
 
 const QuizPage = () => {
 
     const questionsRef = useRef();
     const manualQuizRef = useRef();
     const aiQuizRef = useRef();
+    const navigate = useNavigate();
+
 
     const [currentQuizIndex, setQuizIndex] = useState(0);
     const [createdQuestionsCount, setQuestionCount] = useState(0);
@@ -20,6 +23,7 @@ const QuizPage = () => {
     const [timeLimit, setTimeLimit] = useState('');
     const [quizCode, setQuizCode] = useState(generateRandomCode());
     const [error, setError] = useState('');
+    const [confirmation, setConfirmation] = useState('');
 
     useEffect(() => {
         if(questionsRef.current) {
@@ -74,6 +78,11 @@ const QuizPage = () => {
                 return null;
         }
     };
+
+
+    const Transition = React.forwardRef(function Transition(props, ref) {
+        return <Slide direction="up" ref={ref} {...props} />;
+    });
   
     return (
       <div className='quiz-page-container'>
@@ -128,9 +137,24 @@ const QuizPage = () => {
                 <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Išsaugoti klausimyną</button>
             </div>
             <div className='created-questions'>
-                <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} setError={setError} onUpdateQuestions={updateCreatedQuestions} />
+                    <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} setError={setError} setConfirmation={setConfirmation} onUpdateQuestions={updateCreatedQuestions} />
             </div>
-        </div>
+            </div>
+            
+
+            <Dialog
+                open={confirmation ? true : false}
+                TransitionComponent={Transition}
+                keepMounted
+                aria-describedby="alert-dialog-slide-description"
+                style={{padding: 10}}
+            >
+                <>
+                    <h2 style={{ textAlign: 'center', margin: 50 }}>{confirmation}</h2>
+                <Button onClick={()=>{navigate(`/`) }} variant='contained'>Grįžti į pradžią</Button>
+                </>
+    
+            </Dialog>
       </div>
     );
 };
