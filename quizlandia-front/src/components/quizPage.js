@@ -18,9 +18,9 @@ const QuizPage = () => {
     const [currentQuizIndex, setQuizIndex] = useState(0);
     const [createdQuestionsCount, setQuestionCount] = useState(0);
     const [isFormValid, setFormValidity] = useState(false);
-    const [quizName, setQuizName] = useState('');
-    const [quizDesc, setQuizDesc] = useState('');
-    const [timeLimit, setTimeLimit] = useState('');
+    const [quizName, setQuizName] = useState(localStorage.getItem('quizName') || '');
+    const [quizDesc, setQuizDesc] = useState(localStorage.getItem('quizDesc') || '');
+    const [timeLimit, setTimeLimit] = useState(localStorage.getItem('timeLimit') || '');
     const [quizCode, setQuizCode] = useState(generateRandomCode());
     const [error, setError] = useState('');
     const [confirmation, setConfirmation] = useState('');
@@ -67,6 +67,30 @@ const QuizPage = () => {
     function updateQuizQuestions(question) {
         questionsRef.current.addQuestion(question);
     }
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('quizName', quizName);
+        }, 2000);
+
+        return () => clearTimeout(timeoutId);
+    }, [quizName]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('quizDesc', quizDesc);
+        }, 2000);
+
+        return () => clearTimeout(timeoutId);
+    }, [quizDesc]);
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            localStorage.setItem('timeLimit', timeLimit);
+        }, 2000);
+
+        return () => clearTimeout(timeoutId);
+    }, [timeLimit]);
 
     const renderQuizComponent = () => {
         switch (currentQuizIndex) {

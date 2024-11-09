@@ -226,7 +226,10 @@ class QuizQuestions extends Component{
         }
 
         this.props.setConfirmation('Klausimynas sėkmingai išsaugotas!');
-        localStorage.setItem('questions', JSON.stringify([]));
+        localStorage.removeItem('questions');
+        localStorage.removeItem('quizName');
+        localStorage.removeItem('quizDesc');
+        localStorage.removeItem('timeLimit');
         return;
     }
 }
