@@ -1,6 +1,6 @@
 export const backEndpoint = {
     getAllQuizes: 'http://localhost:1234/api/Quizzes',
-    getOneQuiz: 'http://localhost:1234/api/Quizzes/',
+    getOneQuizByCode: 'http://localhost:1234/api/Quizzes/',
     postUser: 'http://localhost:1234/api/Users',
     postQuiz: 'http://localhost:1234/api/Quizzes',
     getQuizByCode: 'http://localhost:1234/api/Quizzes/quizCode/',

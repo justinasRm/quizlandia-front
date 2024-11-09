@@ -52,13 +52,14 @@ namespace quizlandia_back.Controllers
         [HttpGet("quizCode/{quizCode}")]
         public async Task<IActionResult> GetQuizByCode(string quizCode)
         {
-            var quiz = await _context.Quizzes.FirstOrDefaultAsync(q => q.QuizCode == quizCode);
+            var quiz = await _context.Quizzes.Include(q => q.Questions).ThenInclude(q => q.Answers).FirstOrDefaultAsync(q => q.QuizCode == quizCode);
 
             if (quiz == null)
             {
                 return NotFound();
             }
-
+            System.Console.WriteLine(quiz.Questions);
+            System.Console.WriteLine("good?");
             return Ok(quiz);
         }
 

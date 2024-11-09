@@ -8,7 +8,7 @@ function SolveQuiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({});
 
     useEffect(() => {
-        fetch(backEndpoint.getOneQuiz + 3, {
+        fetch(backEndpoint.getQuizByCode + id, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
