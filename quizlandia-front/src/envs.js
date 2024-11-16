@@ -5,4 +5,5 @@ export const backEndpoint = {
     getQuizByCode: 'http://localhost:1234/api/Quizzes/quizCode/',
     postAnswers: 'http://localhost:1234/api/QuestAns/quizCode/',
     getUser: 'http://localhost:1234/api/Users/',
+    quizSolved: 'http://localhost:1234/api/QuizSolved',
 }

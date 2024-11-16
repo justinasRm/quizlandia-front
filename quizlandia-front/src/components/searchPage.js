@@ -48,7 +48,8 @@ const SearchPage = () => {
         })).catch((err) =>
         {
             console.log('or err?:');
-            console.log(err)
+            setData(undefined);
+
         })
     }
 
@@ -138,7 +139,7 @@ const SearchPage = () => {
                         <Button variant='contained' style={{ height: 60, marginLeft: -10, marginTop: -3 }} onClick={() => { handleSubmit() }}>Ieškoti</Button>
                     </form>  : null}
 
-            {!data ? null : data.length || data.title ? <Results /> : <text style={{ marginTop: 10}}>Nerasta</text>}
+            {data === undefined ? <text style={{color: 'red'}}>Įvyko nenumatyta klaida. Pabandykite vėliau.</text> : !data ? null : data.length || data.title ? <Results /> : <text style={{ marginTop: 10}}>Nerasta klausimynų</text>}
         </div>
     );
 };

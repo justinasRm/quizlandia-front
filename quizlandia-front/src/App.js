@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Auth from './components/Auth';
@@ -11,6 +11,7 @@ import Header from './components/Header';
 import SearchPage from './components/searchPage';
 import SolveQuiz from './components/solveQuiz';
 import { useDispatch, useSelector } from 'react-redux';
+import { setUid as reduxSetUid } from './authSlice';
 
 const theme = createTheme({
     palette: {
@@ -42,6 +43,14 @@ function App() {
     const authPause = useSelector((state) => state.auth.authPause);
     const authPauseRef = useRef(authPause);
 
+    const dispatch = useDispatch();
+
+    const uidFromRedux = useSelector((state) => state.auth.uid);
+
+useEffect(() => {
+    console.log('UID from Redux changed:', uidFromRedux);
+}, [uidFromRedux]);
+
     useEffect(() => {
         authPauseRef.current = authPause;
     }, [authPause])
@@ -55,6 +64,7 @@ function App() {
                     setIdToken(token);
                     setUid(user.uid);  // Optionally store the uid for display
                     console.log('User is signed in with token:', user);
+                    dispatch(reduxSetUid(user.uid));
                 } catch (error) {
                     console.error('Error fetching ID token:', error);
                 }
@@ -85,10 +95,10 @@ function App() {
 
                     <div style={{ maxWidth: "90%", margin: "auto" }}>
                         <Routes>
-                            <Route path="/" element={idToken ? <MainPage /> : <Auth setUid={setUid} />} />
-                            <Route path="/quiz-creation" element={idToken ? <QuizPage /> : <Auth setUid={setUid} />} />
-                            <Route path="/search-quizzes" element={idToken ? <SearchPage /> : <Auth setUid={setUid} />} />
-                            <Route path="/quiz/:id" element={idToken ? <SolveQuiz /> : <Auth setUid={setUid} />} />
+                            <Route path="/" element={idToken ? <MainPage /> : <Auth setUid={setUid} uid={uid} />} />
+                            <Route path="/quiz-creation" element={idToken ? <QuizPage /> : <Auth setUid={setUid} uid={uid}  />} />
+                            <Route path="/search-quizzes" element={idToken ? <SearchPage /> : <Auth setUid={setUid} uid={uid}  />} />
+                            <Route path="/quiz/:id" element={idToken ? <SolveQuiz /> : <Auth setUid={setUid} uid={uid}  />} />
                         </Routes>
                     </div>
                 </Router>

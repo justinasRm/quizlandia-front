@@ -35,7 +35,7 @@ const GoogleAuth = () => {
                     name: firstName,
                     surname: lastName,
                     email: signupSuccessful.email,
-                    accountType: true,
+                    accountType: accountType === 'Kūrėjas' ? 0 : 1,
                 }
             )
         }).catch((error) => {
