@@ -6,11 +6,14 @@ import { ReactComponent as CreateIcon } from './../assets/icons/create.svg';
 import { ReactComponent as SearchIcon } from './../assets/icons/search.svg';
 import { ReactComponent as StatisticsIcon } from './../assets/icons/statistic.svg';
 import { ReactComponent as ForumIcon } from './../assets/icons/discussion.svg';
+import { useSelector } from 'react-redux';
 
 const MainPage = () => {
 
     //TODO 
-    console.log('MainPage');
+    // get account type from redux
+
+    const accountTypeFromRedux = useSelector((state) => state.auth.userType);
 
     return (
         <>
@@ -18,15 +21,22 @@ const MainPage = () => {
             <div className="link-container-wrapper">
                 <div className="link-container">
 
-                    <Link to="/quiz-creation">
+                    {accountTypeFromRedux === 1 ? <Link to="/quiz-creation">
                         <CreateIcon />
                         <span>Klausimyno kūrimas</span>
-                    </Link>
+                    </Link> : <Link style={{cursor: 'not-allowed', backgroundColor: 'lightgray', pointerEvents: 'none'}} >
+                        <CreateIcon style={{backgroundColor: 'lightgray'}}/>
+                        <span>Klausimyno kūrimas</span>
+                    </Link>}
 
-                    <Link to="/search-quizzes">
+                    {accountTypeFromRedux === 0 ? <Link to="/search-quizzes">
                         <SearchIcon />
                         <span>Naršyti klausimynus</span>
-                    </Link>
+                    </Link> :
+                        <Link style={{cursor: 'not-allowed', backgroundColor: 'lightgray', pointerEvents: 'none'}} >
+                        <SearchIcon style={{backgroundColor: 'lightgray'}} />
+                        <span>Naršyti klausimynus</span>
+                    </Link>}
 
                     <Link to="/forum">
                         <ForumIcon />

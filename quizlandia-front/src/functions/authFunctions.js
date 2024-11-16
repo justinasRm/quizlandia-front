@@ -22,7 +22,8 @@ export const signupUser = async (email, password, name, surname, accountType) =>
                     name: name,
                     surname: surname,
                     email: email,
-                    accountType: true, // eh?
+                    accountType: accountType === 'Kūrėjas' ? 0 : 1,
+
                 }
             )
         }).catch((error) => {

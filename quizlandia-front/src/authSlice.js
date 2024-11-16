@@ -6,6 +6,7 @@ const authSlice = createSlice({
   initialState: {
     authPause: false,
     uid: undefined,
+    userType: undefined,
   },
   reducers: {
     setAuthPause: (state, action) => {
@@ -17,8 +18,11 @@ const authSlice = createSlice({
     setUid: (state, action) => {
       state.uid = action.payload;
     },
+    setUserType: (state, action) => {
+      state.userType = action.payload;
+    },
   },
 });
 
-export const { setAuthPause, toggleAuthPause, setUid } = authSlice.actions;
+export const { setAuthPause, toggleAuthPause, setUid, setUserType } = authSlice.actions;
 export default authSlice.reducer;

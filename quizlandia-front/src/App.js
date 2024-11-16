@@ -11,7 +11,8 @@ import Header from './components/Header';
 import SearchPage from './components/searchPage';
 import SolveQuiz from './components/solveQuiz';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUid as reduxSetUid } from './authSlice';
+import { setUid as reduxSetUid, setUserType } from './authSlice';
+import { userAccountType } from './functions/userAccountType';
 
 const theme = createTheme({
     palette: {
@@ -47,34 +48,40 @@ function App() {
 
     const uidFromRedux = useSelector((state) => state.auth.uid);
 
-useEffect(() => {
-    console.log('UID from Redux changed:', uidFromRedux);
-}, [uidFromRedux]);
+    useEffect(() => {
+        console.log('UID from Redux changed:', uidFromRedux);
+    }, [uidFromRedux]);
 
     useEffect(() => {
         authPauseRef.current = authPause;
     }, [authPause])
 
     const authStateChangeFunc = async (user) => {
-            if (authPauseRef.current) return;
-            if (user) {
-                try {
-                    // Fetch the user's ID token
-                    const token = await user.getIdToken();
-                    setIdToken(token);
-                    setUid(user.uid);  // Optionally store the uid for display
-                    console.log('User is signed in with token:', user);
-                    dispatch(reduxSetUid(user.uid));
-                } catch (error) {
-                    console.error('Error fetching ID token:', error);
+        if (authPauseRef.current) return;
+        if (user) {
+            try {
+                // Fetch the user's ID token
+                const token = await user.getIdToken();
+                setIdToken(token);
+                setUid(user.uid);  // Optionally store the uid for display
+                console.log('User is signed in with token:', user);
+                const type = await userAccountType(user.uid);
+                if (!type) {
+                    console.error('Error fetching user type');
+
                 }
-            } else {
-                setUid(null);
-                setIdToken(null);
-                console.log('No user is signed in.');
+                dispatch(reduxSetUid(user.uid));
+                dispatch(setUserType(type));
+            } catch (error) {
+                console.error('Error fetching ID token:', error);
             }
-            setLoading(false);  // Set loading to false after the auth check
+        } else {
+            setUid(null);
+            setIdToken(null);
+            console.log('No user is signed in.');
         }
+        setLoading(false);  // Set loading to false after the auth check
+    }
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, authStateChangeFunc);
