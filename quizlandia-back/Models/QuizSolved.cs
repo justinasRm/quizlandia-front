@@ -22,5 +22,6 @@ namespace quizlandia_back.Models
         public DateTime CreatedDate { get; set; }
         [Required]
         public TimeSpan TimeTaken { get; set; }
+        public string QuestionSolveds { get; set; }
     }
 }
