@@ -14,14 +14,14 @@ const MainPage = () => {
     // get account type from redux
 
     const accountTypeFromRedux = useSelector((state) => state.auth.userType);
-
+    console.log('account type:', accountTypeFromRedux);
     return (
         <>
             <h1 style={{textAlign: "center", marginBottom: "40px"}}>Pagrindinis puslapis</h1>
             <div className="link-container-wrapper">
                 <div className="link-container">
 
-                    {accountTypeFromRedux === 1 ? <Link to="/quiz-creation">
+                    {accountTypeFromRedux === 0 ? <Link to="/quiz-creation">
                         <CreateIcon />
                         <span>Klausimyno kūrimas</span>
                     </Link> : <Link style={{cursor: 'not-allowed', backgroundColor: 'lightgray', pointerEvents: 'none'}} >
@@ -29,7 +29,7 @@ const MainPage = () => {
                         <span>Klausimyno kūrimas</span>
                     </Link>}
 
-                    {accountTypeFromRedux === 0 ? <Link to="/search-quizzes">
+                    {accountTypeFromRedux === 1 ? <Link to="/search-quizzes">
                         <SearchIcon />
                         <span>Naršyti klausimynus</span>
                     </Link> :

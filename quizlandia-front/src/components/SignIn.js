@@ -47,7 +47,7 @@ function SignIn(props) {
                 Sign In
             </Button>
             <Button variant="text" color="primary" style={{ marginTop: '10px' }} onClick={() => props.setSigninFlow(false)}>
-                Don't have an account? Sign Up
+                Neturi paskyros? Užsiregistruok!
             </Button>
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
 

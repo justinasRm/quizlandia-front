@@ -1,5 +1,5 @@
 import { Button, TextField, Dialog, Slide } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { backEndpoint } from '../envs';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,29 +28,53 @@ const SearchPage = () => {
         }
     };
 
-    function handleSubmit(e) {
-        if (e) e.preventDefault();
-        if (!searchValue) {
-            setData([]);
-            return;
-        }
-        fetch(`${backEndpoint.getQuizByCode + searchValue}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then(res => res.json().then(data => {
-            if (!data.status) {
-                setData(data);
-            } else {
-                setData([]);
-            }
-        })).catch((err) =>
-        {
-            console.log('or err?:');
-            setData(undefined);
+    function handleSubmit(e, all) {
+        if (all) {
+            fetch(`${backEndpoint.getAllQuizes}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => res.json().then(data => {
+                console.log('data is:')
+                console.log(data);
+                if (!data.status) {
+                    setData(data);
+                } else {
+                    setData([]);
+                }
+            })).catch((err) =>
+            {
+                console.log('or err?:');
+                setData(undefined);
 
-        })
+            })
+            return;
+        } else {
+            if (e) e.preventDefault();
+            if (!searchValue) {
+                setData([]);
+                return;
+            }
+            fetch(`${backEndpoint.getQuizByCode + searchValue}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            }).then(res => res.json().then(data => {
+                if (!data.status) {
+                    setData(data);
+                } else {
+                    setData([]);
+                }
+            })).catch((err) =>
+            {
+                console.log('or err?:');
+                setData(undefined);
+
+            })
+        }
+            
     }
 
     const Transition = React.forwardRef(function Transition(props, ref) {
@@ -64,7 +88,7 @@ const SearchPage = () => {
             <div style={{ width: '90%'}}>
                 <h2>Rasti klausimynai</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
-                    <>{data && searchType === 'name' && data.length && data.map((val, ind) => {
+                    <>{data && searchType !== '' && data.length && data.map((val, ind) => {
                         console.log('data is: ', val);
 
                         return (
@@ -80,7 +104,7 @@ const SearchPage = () => {
                     }) }</>
 
                     
-                    {data && searchType === 'code' && data.title && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '50%', backgroundColor: 'white', marginBottom: 5}}>
+                    {data && searchType !== '' && data.title && <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '50%', backgroundColor: 'white', marginBottom: 5}}>
                                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
                                     <h3 style={{ fontSize: 30, marginTop: 10 }}>{data.title || 'Klausimynas - fizika 9 klasė'}</h3>
                                     <h3>Kūrėjas: {data.creatorId || 'Dostojevskis Mikelandželas'}</h3>
@@ -112,7 +136,6 @@ const SearchPage = () => {
                             <h3 style={{margin: 0, fontWeight: 400}}>{quizPopup.creatorId || 'Dostojevskis Mikelandželas'}</h3>
                             <h3 style={{margin: 0, fontWeight: 400}}>{quizPopup.solvedCount}</h3>
                         </div>
-         
                     </div>
                     
                     <Button onClick={()=>{navigate(`/quiz/${quizPopup.quizCode}`) }} variant='contained'>Taip</Button>
@@ -124,21 +147,26 @@ const SearchPage = () => {
         );
     }
 
+    useEffect(() => {
+        setData(null)
+    },[searchType])
+
 
     return (
         <div style={styles.container}>
             <h1 style={{ marginTop: -30 }}>Paieška</h1>
                <div style={{marginBottom: 10}}>
                     <Button onClick={()=>{setSearchType('name')}} color={`${searchType === 'name' ? 'primary' : ''}`}>Pagal pavadinimą</Button>
-                <Button onClick={() => { setSearchType('code') }} color={`${searchType === 'code' ? 'info' : ''}`} >Pagal kodą</Button>
+                    <Button onClick={() => { setSearchType('code') }} color={`${searchType === 'code' ? 'info' : ''}`} >Pagal kodą</Button>
+                <Button onClick={() => { setSearchType('all'); if(searchType !== 'all')handleSubmit(null, true) }} color={`${searchType === 'all' ? 'info' : ''}`} >Visi</Button>
                 </div>
             {searchType === 'name' ?
-                <h3>Kol kas nepasiekiama</h3> : searchType === 'code' ?
+                <h3>Kol kas nepasiekiama</h3> :
+                searchType === 'code' ?
                     <form style={styles.searchComponent} onSubmit={(e) => { handleSubmit(e) }}>
                         <TextField placeholder='Įveskite klausimyno kodą' value={searchValue} length='3' onChange={(e) => { setSearchValue(e.target.value) }} variant='outlined' style={{ width: '90%' }} />
                         <Button variant='contained' style={{ height: 60, marginLeft: -10, marginTop: -3 }} onClick={() => { handleSubmit() }}>Ieškoti</Button>
-                    </form>  : null}
-
+                    </form> : null}
             {data === undefined ? <text style={{color: 'red'}}>Įvyko nenumatyta klaida. Pabandykite vėliau.</text> : !data ? null : data.length || data.title ? <Results /> : <text style={{ marginTop: 10}}>Nerasta klausimynų</text>}
         </div>
     );

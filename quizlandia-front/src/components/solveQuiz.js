@@ -114,7 +114,7 @@ useEffect(() => {
     
     postQuizSolved();
     // ok - cia papostina quiz, bet duomenyse nera parodyta, kurios klausimus atsake. Tik bendras gerai atsakytu klausimu kiekis. Bet statistika dabar is karto po kvizo issprendimo rodyt galima. 
-
+    
     }
     
       const handleAnswerChange = (questionID, answerID) => {
