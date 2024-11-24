@@ -22,6 +22,7 @@ function SolveQuiz() {
   const [finishing, setFinishing] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(null);
+  const [watchMode, setWatchMode] = useState(false);
   const userIdFromRedux = useSelector(state => state.auth.uid);
 
 
@@ -37,15 +38,10 @@ useEffect(() => {
 
     return () => clearInterval(timerId);
   } else if (timeLeft === 0) {
-    outOfTime(); 
+    finish(); 
   }
 }, [timeLeft, finishing]);
 
-
-  function outOfTime() {
-    console.log('Time is up!');
-    finish();
-  }
 
     useEffect(() => {
         fetch(backEndpoint.getQuizByCode + id, {
@@ -86,12 +82,23 @@ useEffect(() => {
     setFinishing(true);
       const correctAnswersCount = getCorrectAnswersCount();
 
-
+    
+    const QSs = quizData.questions.map(question => {
+      const selectedAnswerID = selectedAnswers[question.questionID];
+      const selectedAnswer = question.answers.find(answer => answer.answerID === parseInt(selectedAnswerID));
+      return {
+        questionID: question.questionID,
+        answerID: selectedAnswer ? selectedAnswer.answerID : null,
+        isCorrect: !selectedAnswer || !selectedAnswer.isCorrect ? 0 : 1
+      };
+    });
+    
       const quizSolvedPost = {
         quizID: quizData.quizID,
         solverID: userIdFromRedux,
         correctAnswerCount: correctAnswersCount,
         timetaken: formatTime(`${convertToSeconds(quizData.timeLimit) - timeLeft}`),
+        QuestionSolveds: JSON.stringify(QSs),
       }
       console.log('quizSolvedPost:');
       console.log(quizSolvedPost)
@@ -113,8 +120,6 @@ useEffect(() => {
     }
     
     postQuizSolved();
-    // ok - cia papostina quiz, bet duomenyse nera parodyta, kurios klausimus atsake. Tik bendras gerai atsakytu klausimu kiekis. Bet statistika dabar is karto po kvizo issprendimo rodyt galima. 
-    
     }
     
       const handleAnswerChange = (questionID, answerID) => {
@@ -132,31 +137,35 @@ useEffect(() => {
   
   
   function getCorrectAnswersCount() {
-     // Normalize selectedAnswers for easier processing
     const answers = Object.entries(selectedAnswers).map(([questionID, answerID]) => ({
         questionID,
-        answerID: parseInt(answerID) // User can only select one answer
+        answerID: parseInt(answerID)
     }));
-    // Process quiz data to count correct answers
     const correctAnswersCount = quizData.questions.reduce((acc, question) => {
-        // Get all correct answers for the current question
         const correctAnswerIDs = question.answers
             .filter(answer => answer.isCorrect)
             .map(answer => answer.answerID);
 
-        // Get the user's selected answer for the current question
         const userSelectedAnswer = answers.find(
             userAnswer => parseInt(userAnswer.questionID) === question.questionID
         )?.answerID;
 
-        // Check if the user's selected answer is among the correct answers
         const isCorrect = userSelectedAnswer !== undefined && correctAnswerIDs.includes(userSelectedAnswer);
 
-        // Increment count if the user's answer is correct
         return acc + (isCorrect ? 1 : 0);
     }, 0);
 
     return correctAnswersCount;
+  }
+
+
+  function viewAnswers() {
+    setWatchMode(true);
+    // cia reiktu highlightint teisingus atsakymus
+  }
+
+  function leave() {
+    window.location.href = '/';
   }
     
   if (!quizData) {
@@ -169,13 +178,15 @@ useEffect(() => {
     return (
       <div style={{ marginBottom: 50 }}>
        <Dialog
-        open={timeLeft === 0 ? true : false}
+        open={watchMode || timeLeft !== 0 ? false : true}
         TransitionComponent={Transition}
-        keepMounted
+        // keepMounted
         aria-describedby="alert-dialog-slide-description"
         >
-          <h2 style={{textAlign: 'center', padding: 10}}>Jūsų laikas baigėsi!</h2>
-          <Button onClick={() => { finish() }}>Baigti klausimyną</Button>
+          <h2 style={{ textAlign: 'center', padding: 10 }}>Jūsų laikas baigėsi! Atsakymai buvo išsaugoti.</h2>
+          <h3 style={{ textAlign: 'center' }}>Teisingai atsakytų klausimų skaičius: {getCorrectAnswersCount()}</h3>
+          <Button onClick={()=>{viewAnswers()}} >Peržiūrėti atsakymus</Button>
+          <Button onClick={() => { leave() }}>Išeiti</Button>
       </Dialog>
 
 
@@ -220,48 +231,3 @@ useEffect(() => {
 }
 
 export default SolveQuiz;
-
-
-
-// {
-//   "quizID": 4,
-//   "creatorId": "bambam",
-//   "title": "string",
-//   "description": "string",
-//   "createdDate": "2024-10-24T18:58:40.5913343",
-//   "status": 0,
-//   "quizCode": "123456789a",
-//   "solvedCount": 0,
-//   "questions": [
-//     {
-//       "questionID": 1,
-//       "quizID": 4,
-//       "questionText": "firstQ",
-//       "questionOrder": 0,
-//       "questionType": 0,
-//       "answers": [
-//         {
-//           "answerID": 1,
-//           "questionID": 0,
-//           "answerText": "string",
-//           "isCorrect": true
-//         }
-//       ]
-//     },
-//     {
-//       "questionID": 2,
-//       "quizID": 4,
-//       "questionText": "string",
-//       "questionOrder": 1,
-//       "questionType": 0,
-//       "answers": [
-//         {
-//           "answerID": 2,
-//           "questionID": 0,
-//           "answerText": "string",
-//           "isCorrect": false
-//         }
-//       ]
-//     }
-//   ]
-// }
