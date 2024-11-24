@@ -19,17 +19,29 @@ namespace quizlandia_back.Controllers
             _context = context;
         }
 
+        // GET: api/Quizzes?name=quizName and api/Quizzes
         [HttpGet]
-        public async Task<IActionResult> GetAllQuizes()
+        public async Task<ActionResult<IEnumerable<Quiz>>> GetAllQuizes([FromQuery] string name = null)
         {
-            var quiz = await _context.Quizzes.ToListAsync();
+            List<Quiz> quizzes;
 
-            if (quiz == null)
+            if (!string.IsNullOrEmpty(name))
+            {
+                IQueryable<Quiz> query = _context.Quizzes;
+                query = query.Where(q => q.Title.Contains(name));
+                quizzes = await query.ToListAsync();
+            }
+            else
+            {
+                quizzes = await _context.Quizzes.ToListAsync();
+            }
+
+            if (quizzes == null || !quizzes.Any())
             {
                 return NotFound();
             }
 
-            return Ok(quiz);
+            return Ok(quizzes);
         }
 
         // GET: api/Quizzes/{id}
