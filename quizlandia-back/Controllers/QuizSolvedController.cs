@@ -47,7 +47,8 @@ namespace quizlandia_back.Controllers
                 SolverID = createQuizSolvedDto.SolverID,
                 CorrectAnswerCount = createQuizSolvedDto.CorrectAnswerCount,
                 CreatedDate = DateTime.UtcNow,
-                TimeTaken = createQuizSolvedDto.TimeTaken
+                TimeTaken = createQuizSolvedDto.TimeTaken,
+                QuestionSolveds = createQuizSolvedDto.QuestionSolveds
             };
 
             _context.QuizSolveds.Add(quizSolved);
@@ -77,7 +78,8 @@ namespace quizlandia_back.Controllers
                 SolverID = quizSolved.SolverID,
                 CorrectAnswerCount = quizSolved.CorrectAnswerCount,
                 TimeTaken = quizSolved.TimeTaken,
-                CreatedDate = quizSolved.CreatedDate
+                CreatedDate = quizSolved.CreatedDate,
+                QuestionSolveds = quizSolved.QuestionSolveds
             };
 
             return Ok(quizSolvedDto);
@@ -95,7 +97,8 @@ namespace quizlandia_back.Controllers
                     SolverID = qs.SolverID,
                     CorrectAnswerCount = qs.CorrectAnswerCount,
                     TimeTaken = qs.TimeTaken,
-                    CreatedDate = qs.CreatedDate
+                    CreatedDate = qs.CreatedDate,
+                    QuestionSolveds = qs.QuestionSolveds
                 })
                 .ToListAsync();
             
@@ -120,7 +123,8 @@ namespace quizlandia_back.Controllers
                     SolverID = qs.SolverID,
                     CorrectAnswerCount = qs.CorrectAnswerCount,
                     TimeTaken = qs.TimeTaken,
-                    CreatedDate = qs.CreatedDate
+                    CreatedDate = qs.CreatedDate,
+                    QuestionSolveds = qs.QuestionSolveds
                 })
                 .ToListAsync();
 
@@ -151,7 +155,8 @@ namespace quizlandia_back.Controllers
                 SolverID = quizSolved.SolverID,
                 CorrectAnswerCount = quizSolved.CorrectAnswerCount,
                 TimeTaken = quizSolved.TimeTaken,
-                CreatedDate = quizSolved.CreatedDate
+                CreatedDate = quizSolved.CreatedDate,
+                QuestionSolveds = quizSolved.QuestionSolveds
             };
 
             return Ok(quizSolvedDto);
