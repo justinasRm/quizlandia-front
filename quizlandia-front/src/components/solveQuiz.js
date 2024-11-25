@@ -23,24 +23,27 @@ function SolveQuiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(null);
   const [watchMode, setWatchMode] = useState(false);
+  const [finishingDoublecheck, setFinishingDoublecheck] = useState(false);
   const userIdFromRedux = useSelector(state => state.auth.uid);
 
 
 useEffect(() => {
   if (finishing) {
-    return; // Stop the timer if finishing is true
+    return;
   }
 
-  if (timeLeft > 0) {
-    const timerId = setInterval(() => {
-      setTimeLeft(prevTime => prevTime - 1);
-    }, 1000);
-
-    return () => clearInterval(timerId);
-  } else if (timeLeft === 0) {
-    finish(); 
+  if (timeLeft === 0 && !finishing) {
+    finish();
+    return; 
   }
+
+  const timerId = setInterval(() => {
+    setTimeLeft(prevTime => Math.max(prevTime - 1, 0));
+  }, 1000);
+
+  return () => clearInterval(timerId);
 }, [timeLeft, finishing]);
+
 
 
     useEffect(() => {
@@ -76,11 +79,11 @@ useEffect(() => {
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, []);
+   }, []);
 
   function finish() {
     setFinishing(true);
-      const correctAnswersCount = getCorrectAnswersCount();
+    const correctAnswersCount = getCorrectAnswersCount();
 
     
     const QSs = quizData.questions.map(question => {
@@ -100,8 +103,6 @@ useEffect(() => {
         timetaken: formatTime(`${convertToSeconds(quizData.timeLimit) - timeLeft}`),
         QuestionSolveds: JSON.stringify(QSs),
       }
-      console.log('quizSolvedPost:');
-      console.log(quizSolvedPost)
 
     const postQuizSolved = () => {
       fetch(backEndpoint.quizSolved, {
@@ -161,7 +162,6 @@ useEffect(() => {
 
   function viewAnswers() {
     setWatchMode(true);
-    // cia reiktu highlightint teisingus atsakymus
   }
 
   function leave() {
@@ -177,54 +177,99 @@ useEffect(() => {
 
     return (
       <div style={{ marginBottom: 50 }}>
-       <Dialog
-        open={watchMode || timeLeft !== 0 ? false : true}
-        TransitionComponent={Transition}
-        // keepMounted
-        aria-describedby="alert-dialog-slide-description"
-        >
-          <h2 style={{ textAlign: 'center', padding: 10 }}>Jūsų laikas baigėsi! Atsakymai buvo išsaugoti.</h2>
-          <h3 style={{ textAlign: 'center' }}>Teisingai atsakytų klausimų skaičius: {getCorrectAnswersCount()}</h3>
-          <Button onClick={()=>{viewAnswers()}} >Peržiūrėti atsakymus</Button>
-          <Button onClick={() => { leave() }}>Išeiti</Button>
-      </Dialog>
+        {!watchMode && (timeLeft === 0 || finishing) &&
+          <Dialog
+            open={!watchMode && (timeLeft === 0 || finishing) ? true : false}
+            TransitionComponent={Transition}
+            aria-describedby="alert-dialog-slide-description"
+            keepMounted={false}
+          >
+            <h2 style={{ textAlign: 'center', padding: 10 }}>Jūsų laikas baigėsi! Atsakymai buvo išsaugoti.</h2>
+            <h3 style={{ textAlign: 'center' }}>Teisingai atsakytų klausimų skaičius: {getCorrectAnswersCount()}</h3>
+            <Button onClick={() => { viewAnswers() }} >Peržiūrėti atsakymus</Button>
+            <Button onClick={() => { leave() }}>Išeiti</Button>
+          </Dialog>}
 
 
         <Typography variant="h4" component="h1" gutterBottom style={{ textAlign: 'center' }}>Klausimynas: {quizData.title}</Typography>
         
-        {quizData &&
+        {quizData && !watchMode &&
         <div style={{position: 'fixed', bottom: 0, left: 0, width: '100%', display: 'flex', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.3)'}}>
           <text style={{fontSize: 20}}>Liko laiko: {formatTime(timeLeft)}</text>
         </div>
           }
 
         {quizData && quizData.questions && quizData.questions.map(question => (
-        <Card key={question.questionID} variant="outlined" style={{ marginBottom: '20px' }}>
-          <CardContent>
-            <FormControl component="fieldset">
-              <h4 style={{fontSize: 30, margin: 0, fontWeight: 500}}>{question.questionText}</h4>
-              <RadioGroup
-                aria-label={`question-${question.questionID}`}
-                name={`question-${question.questionID}`}
-                value={selectedAnswers[question.questionID] || ''}
-                onChange={(e) => handleAnswerChange(question.questionID, e.target.value)}
-              >
-                {question.answers.map(answer => (
-                  <FormControlLabel
-                    key={answer.answerID}
-                    value={answer.answerID}
-                    control={<Radio />}
-                    label={answer.answerText}
-                  />
-                ))}
-              </RadioGroup>
-            </FormControl>
-          </CardContent>
-        </Card>
+          <Card key={question.questionID} variant="outlined" style={{ marginBottom: '20px' }}>
+            <CardContent>
+              <FormControl component="fieldset">
+                <h4 style={{ fontSize: 30, margin: 0, fontWeight: 500 }}>{question.questionText}</h4>
+                <RadioGroup
+                  aria-label={`question-${question.questionID}`}
+                  name={`question-${question.questionID}`}
+                  value={selectedAnswers[question.questionID] || ''}
+                  onChange={(e) => handleAnswerChange(question.questionID, e.target.value)}
+                >
+                  {question.answers.map(answer => {
+                    // Determine if the answer is selected and correct
+                    const isSelected = selectedAnswers[question.questionID] == answer.answerID;
+                    const isCorrect = answer.isCorrect;
+
+                    let answerStyle = {};
+                    let radioStyle = {};
+
+                    if (watchMode) {
+                      answerStyle.color = isCorrect ? 'green' : 'red'; 
+                      radioStyle.color = isCorrect ? 'green' : 'red';
+                    }
+
+                    if (isSelected) {
+                      answerStyle.fontWeight = 'bold';
+                    }
+
+                    return (
+                      <FormControlLabel
+                        key={answer.answerID}
+                        value={answer.answerID}
+                        control={
+                          <Radio
+                            sx={{
+                              '&.Mui-checked': radioStyle,
+                              '&.Mui-disabled': radioStyle,
+                            }}
+                            checked={isSelected}
+                            disabled={watchMode}
+                          />
+                        }
+                        label={
+                          <span style={answerStyle}>{answer.answerText}</span>
+                        }
+                      />
+                    );
+                  })}
+                </RadioGroup>
+              </FormControl>
+            </CardContent>
+          </Card>
+
+
+
+
       ))}
-      <Button onClick={()=>{finish()}} variant="contained" color="primary" style={{ marginTop: '20px' }}>
+        <Button disabled={watchMode} onClick={() => { setFinishingDoublecheck(true) }} variant="contained" color="primary" style={{ marginTop: '20px' }}>
         Baigti
-      </Button>
+        </Button>
+        <Dialog
+          open={!watchMode &&(finishingDoublecheck && timeLeft !== 0 && !finishing)}
+          onClose={() => { setFinishingDoublecheck(false) }}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <h2 style={{ textAlign: 'center' }}>Ar tikrai norite baigti?</h2>
+          <Button onClick={() => { finish() }} variant="contained">Taip</Button>
+          <Button onClick={() => { setFinishingDoublecheck(false) }}>Ne</Button>
+        </Dialog>
+
+        {watchMode && <div style={{ position: 'fixed', bottom: 0, left: 0, width: '100%', textAlign: 'center' }}><Button style={{fontSize: 22}} fullWidth variant='contained' onClick={()=>{ leave() }} >Išeiti</Button></div>}
       </div>
         
   );
