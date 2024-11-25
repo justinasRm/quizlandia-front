@@ -264,7 +264,7 @@ useEffect(() => {
           onClose={() => { setFinishingDoublecheck(false) }}
           aria-describedby="alert-dialog-slide-description"
         >
-          <h2 style={{ textAlign: 'center' }}>Ar tikrai norite baigti?</h2>
+          <h2 style={{ textAlign: 'center', margin: 50 }}>Ar tikrai norite baigti?</h2>
           <Button onClick={() => { finish() }} variant="contained">Taip</Button>
           <Button onClick={() => { setFinishingDoublecheck(false) }}>Ne</Button>
         </Dialog>

@@ -7,7 +7,7 @@ const SearchPage = () => {
 
     const [searchValue, setSearchValue] = React.useState('');
     const [data, setData] = React.useState(null);
-    const [searchType, setSearchType] = React.useState('');
+    const [searchType, setSearchType] = React.useState('name');
     const navigate = useNavigate();
     const [quizPopup, setQuizPopup] = React.useState(null);
 
@@ -29,12 +29,14 @@ const SearchPage = () => {
     };
 
     function handleSubmit(e, all) {
-        if (all) {
-            fetch(`${backEndpoint.getAllQuizes}`, {
+        e && e.preventDefault();
+        if (all || searchType === 'name') {
+            const url = `${backEndpoint.getAllQuizes}${searchType === 'name' ? `?name=${encodeURIComponent(searchValue)}` : ''}`;
+            fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
             }).then(res => res.json().then(data => {
                 console.log('data is:')
                 console.log(data);
@@ -46,6 +48,7 @@ const SearchPage = () => {
             })).catch((err) =>
             {
                 console.log('or err?:');
+                console.log(err);
                 setData(undefined);
 
             })
@@ -67,8 +70,7 @@ const SearchPage = () => {
                 } else {
                     setData([]);
                 }
-            })).catch((err) =>
-            {
+            })).catch((err) => {
                 console.log('or err?:');
                 setData(undefined);
 
@@ -86,7 +88,7 @@ const SearchPage = () => {
     const Results = () => {
         return (
             <div style={{ width: '90%'}}>
-                <h2>Rasti klausimynai</h2>
+                <h2 style={{textAlign: 'center'}}>Rasti klausimynai</h2>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
                     <>{data && searchType !== '' && data.length && data.map((val, ind) => {
                         console.log('data is: ', val);
@@ -160,9 +162,7 @@ const SearchPage = () => {
                     <Button onClick={() => { setSearchType('code') }} color={`${searchType === 'code' ? 'info' : ''}`} >Pagal kodą</Button>
                 <Button onClick={() => { setSearchType('all'); if(searchType !== 'all')handleSubmit(null, true) }} color={`${searchType === 'all' ? 'info' : ''}`} >Visi</Button>
                 </div>
-            {searchType === 'name' ?
-                <h3>Kol kas nepasiekiama</h3> :
-                searchType === 'code' ?
+                {searchType === 'code' || searchType === 'name' ?
                     <form style={styles.searchComponent} onSubmit={(e) => { handleSubmit(e) }}>
                         <TextField placeholder='Įveskite klausimyno kodą' value={searchValue} length='3' onChange={(e) => { setSearchValue(e.target.value) }} variant='outlined' style={{ width: '90%' }} />
                         <Button variant='contained' style={{ height: 60, marginLeft: -10, marginTop: -3 }} onClick={() => { handleSubmit() }}>Ieškoti</Button>
