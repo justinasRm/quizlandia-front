@@ -3,7 +3,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle, FormControl,
 import { authWithGoogle } from '../functions/authFunctions';
 import { backEndpoint } from '../envs';
 import { useDispatch } from 'react-redux';
-import { setAuthPause } from '../authSlice';
+import { setUid as reduxSetUid, setAuthPause, setUserType } from '../authSlice';
 
 const GoogleAuth = () => {
 
@@ -48,6 +48,8 @@ const GoogleAuth = () => {
                 setFollowupError('Nepavyko sukurti paskyros');
                 return;
             } else {
+                dispatch(reduxSetUid(signupSuccessful.uid));
+                dispatch(setUserType(accountType === 'Kūrėjas' ? 0 : 1));
                 setSignupSuccessful(false);
                 dispatch(setAuthPause(false));
                 window.location.reload();

@@ -2,13 +2,12 @@ import { getAuth, signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import { setPersistence, browserLocalPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { backEndpoint } from '../envs';
-import { setAuthPause } from '../authSlice';
+import { setUid as reduxSetUid, setUserType, setAuthPause } from '../authSlice';
 
-export const signupUser = async (email, password, name, surname, accountType) => {
+export const signupUser = async (email, password, name, surname, accountType, dispatch) => {
     try {
         await setPersistence(auth, browserLocalPersistence);
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
         const user = userCredential.user;
 
         await fetch(backEndpoint.postUser, {
@@ -26,9 +25,14 @@ export const signupUser = async (email, password, name, surname, accountType) =>
 
                 }
             )
+        }).then((response) => {
+            dispatch(reduxSetUid(user.uid));
+            dispatch(setUserType(accountType.toLowerCase() === 'sprendėjas' ? 1 : 0));
         }).catch((error) => {
             console.error('Error signing in:', error);
         })
+
+
         return user;
     } catch (error) {
         console.log('ERROR')
@@ -56,7 +60,7 @@ export const loginUser = async (email, password) => {
         return user;
     } catch (error) {
         if(error.code.includes('invalid-credential')){
-            return {error: 'Wrong email, password or authentication method'};
+            return {error: 'Blogas el. paštas, slaptažodis arba autentifikacijos metodas'};
         }
     }
 }
@@ -81,7 +85,7 @@ export const authWithGoogle = async (dispatch) => {
         }).then((response) => {
             if (response.statusText === 'Not Found') {
                 // new user just created. need to get his name, surname, account type
-                rtrn = {displayAdditionalInfo: true, ...userCredential.user};
+                rtrn = { displayAdditionalInfo: true, ...userCredential.user };
             } else {
                 rtrn = userCredential.user;
             }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Dialog } from '@mui/material';
 import { DialogTitle, DialogContent, DialogActions, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { signupUser } from '../functions/authFunctions';
+import { useDispatch } from 'react-redux';
 
 function SignUp(props) {
     const [email, setEmail] = useState('');
@@ -20,6 +21,8 @@ function SignUp(props) {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return emailRegex.test(email);
     };
+
+    const dispatch = useDispatch();
 
     const validate = () => {
         if (!validateEmailFormat(email)) {
@@ -60,7 +63,7 @@ function SignUp(props) {
             return;
         }
 
-       const signup = await signupUser(email, password, firstName, lastName, accountType);
+       const signup = await signupUser(email, password, firstName, lastName, accountType, dispatch);
             if (signup.error) {
                 setError(signup.error);
                 setSignupSuccessful(false)
