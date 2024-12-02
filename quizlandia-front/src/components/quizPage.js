@@ -6,6 +6,7 @@ import AiQuiz from './../classes/aiQuiz';
 import { TextField, Slide, Dialog, Button } from '@mui/material';
 import { generateRandomCode } from '../functions/generateRandomCode';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 const QuizPage = () => {
 
@@ -24,6 +25,7 @@ const QuizPage = () => {
     const [quizCode, setQuizCode] = useState(generateRandomCode());
     const [error, setError] = useState('');
     const [confirmation, setConfirmation] = useState('');
+    const uid = useSelector((state) => state.auth.uid);
 
     useEffect(() => {
         if(questionsRef.current) {
@@ -161,7 +163,7 @@ const QuizPage = () => {
                 <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Išsaugoti klausimyną</button>
             </div>
             <div className='created-questions'>
-                    <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} setError={setError} setConfirmation={setConfirmation} onUpdateQuestions={updateCreatedQuestions} />
+                <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} uid={uid} setError={setError} setConfirmation={setConfirmation} onUpdateQuestions={updateCreatedQuestions} />
             </div>
             </div>
             

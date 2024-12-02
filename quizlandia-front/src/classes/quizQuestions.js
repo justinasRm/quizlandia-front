@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { backEndpoint } from '../envs';
 import { formatTimeSpan } from '../functions/formatTimeSpan';
+import { useSelector } from 'react-redux';
 
 /*
  * Quiz Question component for saving all created questions
@@ -136,7 +137,7 @@ class QuizQuestions extends Component{
         }
         const postQuizObj = {};
 
-        postQuizObj.creatorId = 'string';
+        postQuizObj.creatorId = this.props.uid;
         postQuizObj.title = this.props.quizName;
         postQuizObj.description = this.props.quizDescription;
         postQuizObj.status = 0;
@@ -144,6 +145,7 @@ class QuizQuestions extends Component{
         postQuizObj.timeLimit = formatTimeSpan(this.props.timeLimit);
 
         let postedQuizResponse;
+
         try {
             let errors;
 
@@ -175,6 +177,7 @@ class QuizQuestions extends Component{
             }
         } catch (err) {
             this.props.setError('Klaida išsaugant klausimyną. Pabandykite vėliau durnius.');
+            console.log(err);
             return;
         }
 
@@ -194,7 +197,7 @@ class QuizQuestions extends Component{
         questions.map((question, index) => {
             let currentQuestion = {
                 //TODO check if ID needed
-                // id: question.id,
+                id: question.id,
                 questionOrder: index + 1,
                 questionType: 0,
                 questionText: question.text,
@@ -207,7 +210,6 @@ class QuizQuestions extends Component{
             }
             questionsToSend.questions.push(currentQuestion);
         });
-
 
         try {
             const response = await fetch(backEndpoint.postAnswers + this.props.quizCode, {

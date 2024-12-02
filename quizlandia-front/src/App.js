@@ -9,6 +9,7 @@ import MainPage from './components/mainPage';
 import QuizPage from './components/quizPage';
 import Header from './components/Header';
 import SearchPage from './components/searchPage';
+import Statistics from './components/statistics';
 import SolveQuiz from './components/solveQuiz';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUid as reduxSetUid, setUserType } from './authSlice';
@@ -102,9 +103,18 @@ function App() {
 
                     <div style={{ maxWidth: "90%", margin: "auto" }}>
                         <Routes>
-                            <Route path="/" element={idToken ? <MainPage /> : <Auth setUid={setUid} uid={uid} />} />
-                            <Route path="/quiz-creation" element={idToken ? <QuizPage /> : <Auth setUid={setUid} uid={uid}  />} />
-                            <Route path="/search-quizzes" element={idToken ? <SearchPage /> : <Auth setUid={setUid} uid={uid}  />} />
+                            {
+                                !idToken ? <Route path="/" element={<Auth setUid={setUid} uid={uid} />} />
+                                    :
+                                    <>
+                                        <Route path="/" element={<MainPage />} />
+                                        <Route path="/quiz-creation" element={<QuizPage />} />
+                                        <Route path="/search-quizzes" element={<SearchPage />} />
+                                        <Route path="/statistics" element={<Statistics />} />
+                                        <Route path="/quiz/:id" element={<SolveQuiz />} />
+                                    </>
+                            }
+                            <Route path="/statistics" element={idToken ? <SearchPage /> : <Auth setUid={setUid} uid={uid}  />} />
                             <Route path="/quiz/:id" element={idToken ? <SolveQuiz /> : <Auth setUid={setUid} uid={uid}  />} />
                         </Routes>
                     </div>
