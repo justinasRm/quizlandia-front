@@ -116,7 +116,7 @@ function App() {
                                         <Route path="/search-quizzes" element={<SearchPage />} />
                                         <Route path="/statistics" element={<Statistics />} />
                                         <Route path="/quiz/:id" element={<SolveQuiz />} />
-                                        <Route path="/my-quizzes" element={<UserQuizzes />} />
+                                        <Route path="/my-quizzes" element={<UserQuizzes userId={uidFromRedux} />} />
                                     </>
                             }
                             <Route path="/statistics" element={idToken ? <SearchPage /> : <Auth setUid={setUid} uid={uid}  />} />

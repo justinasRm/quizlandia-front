@@ -34,7 +34,7 @@ namespace quizlandia_back.Controllers
 
             if (!string.IsNullOrEmpty(creatorId))
             {
-                query = query.Where(q => q.Title.Contains(creatorId));
+                query = query.Where(q => q.CreatorId.Contains(creatorId));
             }
 
             quizzes = await query.ToListAsync();
