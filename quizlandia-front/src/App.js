@@ -11,6 +11,7 @@ import Header from './components/Header';
 import SearchPage from './components/searchPage';
 import Statistics from './components/statistics';
 import SolveQuiz from './components/solveQuiz';
+import UserQuizzes from './components/userQuizPage';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUid as reduxSetUid, setUserType } from './authSlice';
 import { userAccountType } from './functions/userAccountType';
@@ -42,6 +43,9 @@ function App() {
     const [idToken, setIdToken] = useState(null);  // Tracks the secure token
     const [loading, setLoading] = useState(true);  // Tracks loading state
 
+    const accountType = useSelector((state) => state.auth.userType);
+    console.log("account type: " + accountType);
+    
     const authPause = useSelector((state) => state.auth.authPause);
     const authPauseRef = useRef(authPause);
 
@@ -99,7 +103,7 @@ function App() {
             <CssBaseline />
             <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh'}}>
                 <Router>
-                    {idToken && <Header />}
+                    {idToken && <Header accountType={accountType} />}
 
                     <div style={{ maxWidth: "90%", margin: "auto" }}>
                         <Routes>
@@ -107,11 +111,12 @@ function App() {
                                 !idToken ? <Route path="/" element={<Auth setUid={setUid} uid={uid} />} />
                                     :
                                     <>
-                                        <Route path="/" element={<MainPage />} />
+                                        <Route path="/" element={<MainPage accountType={accountType} />} />
                                         <Route path="/quiz-creation" element={<QuizPage />} />
                                         <Route path="/search-quizzes" element={<SearchPage />} />
                                         <Route path="/statistics" element={<Statistics />} />
                                         <Route path="/quiz/:id" element={<SolveQuiz />} />
+                                        <Route path="/my-quizzes" element={<UserQuizzes />} />
                                     </>
                             }
                             <Route path="/statistics" element={idToken ? <SearchPage /> : <Auth setUid={setUid} uid={uid}  />} />
