@@ -23,5 +23,8 @@ namespace quizlandia_back.Models
         [Required]
         public TimeSpan TimeTaken { get; set; }
         public string QuestionSolveds { get; set; }
+
+        // Add this navigation property
+        public virtual Quiz Quiz { get; set; }
     }
 }

@@ -17,5 +17,8 @@ namespace quizlandia_back.Models
 
         [Required]
         public bool IsCorrect { get; set; }
+
+        // navigation property
+        public virtual QuizQuestion Question { get; set; }
     }
 }

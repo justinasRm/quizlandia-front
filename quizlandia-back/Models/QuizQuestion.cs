@@ -23,6 +23,7 @@ namespace quizlandia_back.Models
         public int QuestionType { get; set; }
 
         // Add this navigation property
+        public virtual Quiz Quiz { get; set; }
         public virtual ICollection<QuizAnswer> Answers { get; set; }
     }
 }

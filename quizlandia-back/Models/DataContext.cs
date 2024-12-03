@@ -21,16 +21,33 @@ namespace quizlandia_back.Models
             modelBuilder.Entity<Quiz>(entity =>
             {
                 entity.HasKey(e => e.QuizID);
+                entity.HasMany(q => q.Questions)
+                    .WithOne(q => q.Quiz)
+                    .HasForeignKey(q => q.QuizID)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<QuizQuestion>(entity =>
             {
                 entity.HasKey(e => e.QuestionID);
+                entity.HasOne(q => q.Quiz)
+                    .WithMany(q => q.Questions)
+                    .HasForeignKey(q => q.QuizID)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(q => q.Answers)
+                    .WithOne(a => a.Question)
+                    .HasForeignKey(a => a.QuestionID)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<QuizAnswer>(entity =>
             {
                 entity.HasKey(e => e.AnswerID);
+                entity.HasOne(a => a.Question)
+                   .WithMany(q => q.Answers)
+                   .HasForeignKey(a => a.QuestionID)
+                   .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<UserInfo>(entity =>
@@ -41,6 +58,10 @@ namespace quizlandia_back.Models
             modelBuilder.Entity<QuizSolved>(entity =>
             {
                 entity.HasKey(e => e.QuizSolvedID);
+                entity.HasOne(qs => qs.Quiz)
+                  .WithMany(q => q.QuizzesSolved)
+                  .HasForeignKey(qs => qs.QuizID)
+                  .OnDelete(DeleteBehavior.Cascade);
             });
 
 

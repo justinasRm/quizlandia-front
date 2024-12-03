@@ -40,5 +40,6 @@ namespace quizlandia_back.Models
         public TimeSpan TimeLimit { get; set; }
 
         public virtual List<QuizQuestion> Questions { get; set; } = new List<QuizQuestion>();
+        public virtual List<QuizSolved> QuizzesSolved { get; set; } = new List<QuizSolved>();
     }
 }

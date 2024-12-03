@@ -130,5 +130,28 @@ namespace quizlandia_back.Controllers
 
             return CreatedAtAction(nameof(GetQuizById), new { id = quiz.QuizID }, quiz);
         }
+
+        // DELETE: api/Quizzes?creatorId={creatorId}&quizId={quizId}
+        [HttpDelete]
+        public async Task<IActionResult> deleteQuiz(string creatorId, int quizId)
+        {
+
+            var quiz = await _context.Quizzes
+                .Include(q => q.Questions)
+                .ThenInclude(q => q.Answers)
+                .Include(q => q.QuizzesSolved)
+                .FirstOrDefaultAsync(q => q.QuizID == quizId && q.CreatorId == creatorId);
+
+            if (quiz == null)
+            {
+                return NotFound();
+            }
+
+            _context.Quizzes.Remove(quiz);
+
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
