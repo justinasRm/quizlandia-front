@@ -11,7 +11,7 @@ function Auth(props) {
             <Typography variant="h4" component="h1" gutterBottom>
                 Welcome to <em style={{ color: 'blue' }}>Quizlandia!</em>
             </Typography>
-            {signinFlow && <SignIn setSigninFlow={setSigninFlow} setUid={props.setUid}/>}
+            {signinFlow && <SignIn setSigninFlow={setSigninFlow} setUid={props.setUid} />}
             {!signinFlow && <SignUp setSigninFlow={setSigninFlow} setUid={props.setUid} />}
             <GoogleAuth setSigninFlow={setSigninFlow} setUid={props.setUid} />
         </Container>

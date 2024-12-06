@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect  } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './quizPage.css';
 import QuizQuestions from './../classes/quizQuestions';
 import ManualQuiz from './../classes/manualQuiz';
@@ -28,7 +28,7 @@ const QuizPage = () => {
     const uid = useSelector((state) => state.auth.uid);
 
     useEffect(() => {
-        if(questionsRef.current) {
+        if (questionsRef.current) {
             setQuestionCount(questionsRef.current.getQuestionCount());
         }
     }, [questionsRef]);
@@ -44,7 +44,7 @@ const QuizPage = () => {
     const updateCreatedQuestions = (value) => {
         setQuestionCount(value);
     }
-    
+
     const handleQuizTypeChange = (index) => {
         setQuizIndex(index);
         setFormValidity(false);
@@ -54,14 +54,14 @@ const QuizPage = () => {
         setQuizKey(prevKey => prevKey + 1);
         setFormValidity(false);
     };
-    
+
     function addQuestion() {
         if (currentQuizIndex === 0 && manualQuizRef.current) {
             manualQuizRef.current.saveQuizQuestion()
         } else if (currentQuizIndex === 1 && aiQuizRef.current) {
             aiQuizRef.current.test(); //TODO when AI type implemented
         }
-        
+
         // Resets form when new question added
         setFormValidity(false);
     }
@@ -97,7 +97,7 @@ const QuizPage = () => {
     const renderQuizComponent = () => {
         switch (currentQuizIndex) {
             case 0:
-                return <ManualQuiz key={quizKey} ref={manualQuizRef} onFormChange={handleForm} onSubmit={updateQuizQuestions}/>;
+                return <ManualQuiz key={quizKey} ref={manualQuizRef} onFormChange={handleForm} onSubmit={updateQuizQuestions} />;
             case 1:
                 return <AiQuiz key={quizKey} ref={aiQuizRef} />;
             default:
@@ -109,79 +109,79 @@ const QuizPage = () => {
     const Transition = React.forwardRef(function Transition(props, ref) {
         return <Slide direction="up" ref={ref} {...props} />;
     });
-  
+
     return (
-      <div className='quiz-page-container'>
+        <div className='quiz-page-container'>
             <div className='quiz-creation-block'>
-                {error && <span style={{color: 'red'}}>{error}</span>}
+                {error && <span style={{ color: 'red' }}>{error}</span>}
                 <div>
                     <div className='quiz-info'>
-                    <span>Klausimyno pavadinimas</span>
-                    <TextField value={quizName} onChange={(e)=>{
-                        setQuizName(e.target.value);
-                    }}></TextField>
-                </div>
-                <div className='quiz-info'>
-                        <span>Klausimyno aprašymas</span>
-                             <TextField value={quizDesc} onChange={(e)=>{
-                        setQuizDesc(e.target.value);
-                    }}></TextField>
-                        
-                </div>
-                <div className='quiz-info'>
-                    <span>Laiko limitas sekundėmis(palikite tuščią, jei nepritaikyti)</span>
-                    <TextField type='number' value={timeLimit} onChange={(e)=>{setTimeLimit(e.target.value)}}></TextField>
-                </div>
+                        <span>Klausimyno pavadinimas</span>
+                        <TextField value={quizName} onChange={(e) => {
+                            setQuizName(e.target.value);
+                        }}></TextField>
+                    </div>
                     <div className='quiz-info'>
-                    <span>Klausimyno kodas(10 simbolių limitas)</span>
-                    <TextField value={quizCode} onChange={(e)=>{setQuizCode(e.target.value)}}></TextField>
+                        <span>Klausimyno aprašymas</span>
+                        <TextField value={quizDesc} onChange={(e) => {
+                            setQuizDesc(e.target.value);
+                        }}></TextField>
+
+                    </div>
+                    <div className='quiz-info'>
+                        <span>Laiko limitas sekundėmis(palikite tuščią, jei nepritaikyti)</span>
+                        <TextField type='number' value={timeLimit} onChange={(e) => { setTimeLimit(e.target.value) }}></TextField>
+                    </div>
+                    <div className='quiz-info'>
+                        <span>Klausimyno kodas(10 simbolių limitas)</span>
+                        <TextField value={quizCode} onChange={(e) => { setQuizCode(e.target.value) }}></TextField>
+                    </div>
+                    <div className='quiz-types'>
+
+                        <span>Klausimyno tipas:</span>
+
+                        <div>
+                            <button className={currentQuizIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}>Rankinis</button>
+                            <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}>AI</button>
+                        </div>
+
+                    </div>
+
+
+                    {renderQuizComponent()}
                 </div>
-                <div className='quiz-types'>
 
-                    <span>Klausimyno tipas:</span>
-            
-                    <div>
-                        <button className={currentQuizIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}>Rankinis</button>
-                        <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}>AI</button>
-                    </div>
-
-                    </div>
-                 
-
-                {renderQuizComponent()}
+                <div className='question-helpers'>
+                    <button id='add-new-question' disabled={!isFormValid} onClick={addQuestion}>Pridėti klausimą</button>
+                    <button id='reset-question' onClick={resetQuiz}>Atnaujinti</button>
+                </div>
             </div>
 
-            <div className='question-helpers'>
-                <button id='add-new-question' disabled={!isFormValid} onClick={addQuestion}>Pridėti klausimą</button>
-                <button id='reset-question' onClick={resetQuiz}>Atnaujinti</button>
+            <div className='quiz-summary-block'>
+                <div>
+                    <span>Klausimai: {createdQuestionsCount}</span>
+                    <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Išsaugoti klausimyną</button>
+                </div>
+                <div className='created-questions'>
+                    <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} uid={uid} setError={setError} setConfirmation={setConfirmation} onUpdateQuestions={updateCreatedQuestions} />
+                </div>
             </div>
-        </div>
 
-        <div className='quiz-summary-block'>
-            <div>
-                <span>Klausimai: {createdQuestionsCount}</span>
-                <button id='save-quiz' disabled={createdQuestionsCount === 0} onClick={questionsRef.current?.saveQuizToDatabase}>Išsaugoti klausimyną</button>
-            </div>
-            <div className='created-questions'>
-                <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} uid={uid} setError={setError} setConfirmation={setConfirmation} onUpdateQuestions={updateCreatedQuestions} />
-            </div>
-            </div>
-            
 
             <Dialog
                 open={confirmation ? true : false}
                 TransitionComponent={Transition}
                 keepMounted
                 aria-describedby="alert-dialog-slide-description"
-                style={{padding: 10}}
+                style={{ padding: 10 }}
             >
                 <>
                     <h2 style={{ textAlign: 'center', margin: 50 }}>{confirmation}</h2>
-                <Button onClick={()=>{navigate(`/`) }} variant='contained'>Grįžti į pradžią</Button>
+                    <Button onClick={() => { navigate(`/`) }} variant='contained'>Grįžti į pradžią</Button>
                 </>
-    
+
             </Dialog>
-      </div>
+        </div>
     );
 };
 

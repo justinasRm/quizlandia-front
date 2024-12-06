@@ -45,7 +45,7 @@ function App() {
 
     const accountType = useSelector((state) => state.auth.userType);
     console.log("account type: " + accountType);
-    
+
     const authPause = useSelector((state) => state.auth.authPause);
     const authPauseRef = useRef(authPause);
 
@@ -101,26 +101,20 @@ function App() {
     return (
         <ThemeProvider theme={theme}>
             <CssBaseline />
-            <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh'}}>
+            <div style={{ backgroundColor: theme.palette.background.default, minHeight: '100vh' }}>
                 <Router>
                     {idToken && <Header accountType={accountType} />}
 
                     <div style={{ maxWidth: "90%", margin: "auto" }}>
                         <Routes>
-                            {
-                                !idToken ? <Route path="/" element={<Auth setUid={setUid} uid={uid} />} />
-                                    :
-                                    <>
-                                        <Route path="/" element={<MainPage accountType={accountType} />} />
-                                        <Route path="/quiz-creation" element={<QuizPage />} />
-                                        <Route path="/search-quizzes" element={<SearchPage />} />
-                                        <Route path="/statistics" element={<Statistics />} />
-                                        <Route path="/quiz/:id" element={<SolveQuiz />} />
-                                        <Route path="/my-quizzes" element={<UserQuizzes userId={uidFromRedux} />} />
-                                    </>
-                            }
-                            <Route path="/statistics" element={idToken ? <SearchPage /> : <Auth setUid={setUid} uid={uid}  />} />
-                            <Route path="/quiz/:id" element={idToken ? <SolveQuiz /> : <Auth setUid={setUid} uid={uid}  />} />
+                            <Route path="/" element={!idToken ? <Auth setUid={setUid} uid={uid} /> : <MainPage accountType={accountType} />} />
+                            <Route path="/quiz-creation" element={!idToken ? <Auth setUid={setUid} uid={uid} /> : <QuizPage />} />
+                            <Route path="/search-quizzes" element={!idToken ? <Auth setUid={setUid} uid={uid} /> : <SearchPage />} />
+                            <Route path="/statistics" element={!idToken ? <Auth setUid={setUid} uid={uid} /> : <Statistics />} />
+                            <Route path="/quiz/:id" element={!idToken ? <Auth setUid={setUid} uid={uid} /> : <SolveQuiz />} />
+                            <Route path="/my-quizzes" element={!idToken ? <Auth setUid={setUid} uid={uid} /> : <UserQuizzes userId={uidFromRedux} />} />
+                            <Route path="/statistics" element={idToken ? <SearchPage /> : <Auth setUid={setUid} uid={uid} />} />
+                            <Route path="/quiz/:id" element={idToken ? <SolveQuiz /> : <Auth setUid={setUid} uid={uid} />} />
                         </Routes>
                     </div>
                 </Router>

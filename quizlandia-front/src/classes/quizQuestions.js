@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
  * Quiz Question component for saving all created questions
  * (should be used as a middleware class for storing quiz questions)
  */
-class QuizQuestions extends Component{
+class QuizQuestions extends Component {
 
     /*
     * Example of "questions" object:
@@ -28,7 +28,7 @@ class QuizQuestions extends Component{
         };
     }
 
-    render () {
+    render() {
         const { questions } = this.state;
 
         return (
@@ -37,7 +37,7 @@ class QuizQuestions extends Component{
                     questions.map((question, index) => (
                         <div className='question' key={question.id}>
                             <div>
-                                <span>{index + 1}. {question.text}</span>  
+                                <span>{index + 1}. {question.text}</span>
                                 <button onClick={() => this.deleteQuestion(index)}>
                                     <DeleteIcon />
                                 </button>
@@ -65,7 +65,7 @@ class QuizQuestions extends Component{
             localStorage.setItem('questions', JSON.stringify(updatedQuestions));
 
             this.props.onUpdateQuestions(prevState.questions.length + 1);
-    
+
             return {
                 questions: updatedQuestions,
             };
@@ -79,7 +79,7 @@ class QuizQuestions extends Component{
             localStorage.setItem('questions', JSON.stringify(updatedQuestions));
 
             this.props.onUpdateQuestions(updatedQuestions.length);
-    
+
             return {
                 questions: updatedQuestions,
             };
@@ -98,7 +98,7 @@ class QuizQuestions extends Component{
     //TODO modify question object as needed before sending to API 
     saveQuizToDatabase = async () => {
         const { questions } = this.state;
-        const postAnswers = {"questions": []};
+        const postAnswers = { "questions": [] };
 
         if (!this.props.quizName.length) {
             this.props.setError('Pavadinimas negali būti tuščias');
@@ -125,10 +125,10 @@ class QuizQuestions extends Component{
             });
 
             console.log('response:', response.status);
-            if(response.status === 200){
+            if (response.status === 200) {
                 this.props.setError('Toks kodas jau egzistuoja. Pakeiskite kodą.');
                 return;
-            } else if(response.status === 404){
+            } else if (response.status === 404) {
                 this.props.setError('');
             }
         } catch (err) {
@@ -142,10 +142,9 @@ class QuizQuestions extends Component{
         postQuizObj.description = this.props.quizDescription;
         postQuizObj.status = 0;
         postQuizObj.quizCode = this.props.quizCode;
-        postQuizObj.timeLimit = formatTimeSpan(this.props.timeLimit);
+        postQuizObj.timeLimit = this.props.timeLimit ? formatTimeSpan(this.props.timeLimit) : "23:59:59";
 
         let postedQuizResponse;
-
         try {
             let errors;
 
@@ -185,15 +184,15 @@ class QuizQuestions extends Component{
             this.props.setError('Klaida išsaugant klausimyną. Pabandykite vėliau.');
             return;
         } else if (postedQuizResponse.quizID) { // means quiz was posted successfully. Continue posting answers.
-            
+
         } else { // other, idfk edge cases
             this.props.setError('Klaida išsaugant klausimyną. Pabandykite vėliau.');
             return;
         }
 
-        
+
         // .postAnswers
-        const questionsToSend = {"questions": []};
+        const questionsToSend = { "questions": [] };
         questions.map((question, index) => {
             let currentQuestion = {
                 //TODO check if ID needed
@@ -221,7 +220,7 @@ class QuizQuestions extends Component{
             });
 
             console.log('response:', response.status);
-           
+
         } catch (err) {
             this.props.setError('Klaida išsaugant atsakymus. Pabandykite vėliau.');
             return;
