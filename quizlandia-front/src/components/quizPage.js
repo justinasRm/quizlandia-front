@@ -9,12 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const QuizPage = () => {
-
     const questionsRef = useRef();
     const manualQuizRef = useRef();
     const aiQuizRef = useRef();
     const navigate = useNavigate();
-
 
     const [currentQuizIndex, setQuizIndex] = useState(0);
     const [createdQuestionsCount, setQuestionCount] = useState(0);
@@ -36,7 +34,6 @@ const QuizPage = () => {
     // Used for correct rendering
     const [quizKey, setQuizKey] = useState(0);
 
-    // Checks if current form is valid for saving
     const handleForm = (value) => {
         setFormValidity(value);
     }
@@ -55,14 +52,18 @@ const QuizPage = () => {
         setFormValidity(false);
     };
 
-    function addQuestion() {
+    async function addQuestion() {
         if (currentQuizIndex === 0 && manualQuizRef.current) {
-            manualQuizRef.current.saveQuizQuestion()
+            // Manual quiz: directly save the question
+            manualQuizRef.current.saveQuizQuestion();
         } else if (currentQuizIndex === 1 && aiQuizRef.current) {
-            aiQuizRef.current.test(); //TODO when AI type implemented
+            // AI quiz: trigger AI question generation
+            // If you want to just add a question directly, you can call a method in AiQuiz that 
+            // then fetches from the backend and returns a question.
+            await aiQuizRef.current.generateAiQuestion();
         }
 
-        // Resets form when new question added
+        // Reset form validity after question added
         setFormValidity(false);
     }
 
@@ -99,12 +100,11 @@ const QuizPage = () => {
             case 0:
                 return <ManualQuiz key={quizKey} ref={manualQuizRef} onFormChange={handleForm} onSubmit={updateQuizQuestions} />;
             case 1:
-                return <AiQuiz key={quizKey} ref={aiQuizRef} />;
+                return <AiQuiz key={quizKey} ref={aiQuizRef} onSubmit={updateQuizQuestions} />;
             default:
                 return null;
         }
     };
-
 
     const Transition = React.forwardRef(function Transition(props, ref) {
         return <Slide direction="up" ref={ref} {...props} />;
@@ -129,30 +129,26 @@ const QuizPage = () => {
 
                     </div>
                     <div className='quiz-info'>
-                        <span>Laiko limitas sekundėmis(palikite tuščią, jei nepritaikyti)</span>
+                        <span>Laiko limitas sekundėmis (palikite tuščią, jei nepritaikyti)</span>
                         <TextField type='number' value={timeLimit} onChange={(e) => { setTimeLimit(e.target.value) }}></TextField>
                     </div>
                     <div className='quiz-info'>
-                        <span>Klausimyno kodas(10 simbolių limitas)</span>
+                        <span>Klausimyno kodas (10 simbolių limitas)</span>
                         <TextField value={quizCode} onChange={(e) => { setQuizCode(e.target.value) }}></TextField>
                     </div>
                     <div className='quiz-types'>
-
                         <span>Klausimyno tipas:</span>
-
                         <div>
                             <button className={currentQuizIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}>Rankinis</button>
                             <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}>AI</button>
                         </div>
-
                     </div>
-
 
                     {renderQuizComponent()}
                 </div>
 
                 <div className='question-helpers'>
-                    <button id='add-new-question' disabled={!isFormValid} onClick={addQuestion}>Pridėti klausimą</button>
+                    <button id='add-new-question' disabled={!isFormValid && currentQuizIndex === 0} onClick={addQuestion}>Pridėti klausimą</button>
                     <button id='reset-question' onClick={resetQuiz}>Atnaujinti</button>
                 </div>
             </div>
@@ -167,7 +163,6 @@ const QuizPage = () => {
                 </div>
             </div>
 
-
             <Dialog
                 open={confirmation ? true : false}
                 TransitionComponent={Transition}
@@ -179,7 +174,6 @@ const QuizPage = () => {
                     <h2 style={{ textAlign: 'center', margin: 50 }}>{confirmation}</h2>
                     <Button onClick={() => { navigate(`/`) }} variant='contained'>Grįžti į pradžią</Button>
                 </>
-
             </Dialog>
         </div>
     );
