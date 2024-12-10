@@ -7,4 +7,5 @@ export const backEndpoint = {
     getUser: 'http://localhost:1234/api/Users/',
     quizSolved: 'http://localhost:1234/api/QuizSolved',
     deleteQuiz: 'http://localhost:1234/api/Quizzes',
+    studentStats: (id) => `http://localhost:1234/api/Users/${id}/stats/student`,
 }

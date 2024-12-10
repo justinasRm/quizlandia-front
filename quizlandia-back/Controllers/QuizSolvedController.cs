@@ -56,6 +56,8 @@ namespace quizlandia_back.Controllers
 
             // Optionally, you can update the SolvedCount in the Quiz entity
             quiz.SolvedCount += 1;
+            user.QuizCount += 1;
+            
             await _context.SaveChangesAsync();
 
             return Ok(quizSolved.QuizSolvedID);

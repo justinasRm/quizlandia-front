@@ -37,31 +37,39 @@ export const signupUser = async (email, password, name, surname, accountType, di
     } catch (error) {
         console.log('ERROR')
         console.log(error.code)
-        if(error.code.includes('email-already-in-use')){
-            return {error: 'Email already in use'};
-        } else if(error.code.includes('weak-password')){
-            return {error: 'Password is too weak'};
-        } else if(error.code.includes('invalid-email')){
-            return {error: 'Invalid email'};
+        if (error.code.includes('email-already-in-use')) {
+            return { error: 'Email already in use' };
+        } else if (error.code.includes('weak-password')) {
+            return { error: 'Password is too weak' };
+        } else if (error.code.includes('invalid-email')) {
+            return { error: 'Invalid email' };
         } else {
             console.log('Unknown error:')
             console.log(error);
-            return {error: 'Unknown error. Try again later.'};
+            return { error: 'Unknown error. Try again later.' };
         }
     }
 };
 
 export const loginUser = async (email, password) => {
+    console.log('pasiekia ane')
     try {
         await setPersistence(auth, browserLocalPersistence);
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
         const user = userCredential.user;
         // You can return the user or any other relevant information
         return user;
     } catch (error) {
-        if(error.code.includes('invalid-credential')){
-            return {error: 'Blogas el. paštas, slaptažodis arba autentifikacijos metodas'};
+        console.log('erroras:')
+        console.log(error.code)
+        if (error.code.includes('invalid-credential')) {
+            return { error: 'Blogas el. paštas, slaptažodis arba autentifikacijos metodas' };
+        } else if (error.code.includes('invalid-email')) {
+            return { error: 'Neteisingas el. paštas' };
         }
+
+        return { error: 'Įvyko klaida. Pabandykite vėliau.' };
     }
 }
 
@@ -95,10 +103,10 @@ export const authWithGoogle = async (dispatch) => {
     } catch (error) {
         console.log('error is:')
         console.log(error.code)
-        if(error.code.includes('invalid-credential')){
-            return {error: 'Wrong email or password'};
+        if (error.code.includes('invalid-credential')) {
+            return { error: 'Wrong email or password' };
         } else if (error.code.includes('user-canceled')) {
-            return {error: 'User cancelled the sign in'};
+            return { error: 'User cancelled the sign in' };
         }
     }
 }
