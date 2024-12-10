@@ -10,15 +10,15 @@ function SignIn(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!email || !password) {
-            setError('Please fill in all fields');
+            setError('Užpildykite visus laukus');
             return;
         }
         const login = await loginUser(email, password);
-        if(login.error){
+        if (login.error) {
             setError(login.error);
             return;
         }
-       
+
     };
 
     return (
@@ -44,7 +44,7 @@ function SignIn(props) {
                 onChange={(e) => setPassword(e.target.value)}
             />
             <Button type="submit" variant="contained" color="primary" style={{ marginTop: '10px' }}>
-                Sign In
+                Prisijungti
             </Button>
             <Button variant="text" color="primary" style={{ marginTop: '10px' }} onClick={() => props.setSigninFlow(false)}>
                 Neturi paskyros? Užsiregistruok!

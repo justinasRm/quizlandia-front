@@ -107,7 +107,7 @@ function SolveQuiz() {
       quizID: quizData.quizID,
       solverID: userIdFromRedux,
       correctAnswerCount: correctAnswersCount,
-      timetaken: quizData.timeLeft ? formatTime(`${convertToSeconds(quizData.timeLimit) - timeLeft}`) : "23:59:59",
+      timeTaken: quizData.timeLimit === '23:59:59' ? '23:59:59' : formatTime(`${convertToSeconds(quizData.timeLimit) - timeLeft}`),
       QuestionSolveds: JSON.stringify(QSs),
     }
 
