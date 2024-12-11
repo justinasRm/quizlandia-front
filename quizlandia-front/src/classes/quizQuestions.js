@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+
 import { backEndpoint } from '../envs';
 import { formatTimeSpan } from '../functions/formatTimeSpan';
 import { useSelector } from 'react-redux';
+import { Button, TextField } from '@mui/material';
 
 /*
  * Quiz Question component for saving all created questions
@@ -25,8 +28,11 @@ class QuizQuestions extends Component {
         const savedQuestions = localStorage.getItem('questions');
         this.state = {
             questions: savedQuestions ? JSON.parse(savedQuestions) : [],
+            editingIndex: null,
         };
     }
+    // <QuizQuestions ref={questionsRef} quizName={quizName} timeLimit={timeLimit} quizCode={quizCode} quizDescription={quizDesc} uid={uid} setError={setError} setConfirmation={setConfirmation} onUpdateQuestions={updateCreatedQuestions} />
+
 
     render() {
         const { questions } = this.state;
@@ -36,19 +42,126 @@ class QuizQuestions extends Component {
                 {questions.length > 0 ? (
                     questions.map((question, index) => (
                         <div className='question' key={question.id}>
-                            <div>
-                                <span>{index + 1}. {question.text}</span>
-                                <button onClick={() => this.deleteQuestion(index)}>
-                                    <DeleteIcon />
-                                </button>
-                            </div>
-                            <div className='answers'>
-                                {question.answers.map((answer, ansIndex) => (
-                                    <p key={ansIndex} className={answer.isCorrect ? 'correct-answer' : ''}>
-                                        {this.indexToLetter(ansIndex)}) {answer.text}
-                                    </p>
-                                ))}
-                            </div>
+                            {this.state.editingIndex === index ? <>
+                                <div>
+                                    <TextField style={{ width: '80%' }} value={question.text} onChange={(e) => {
+                                        const updatedQuestions = [...questions];
+                                        updatedQuestions[index].text = e.target.value;
+                                        this.setState({ questions: updatedQuestions });
+                                        localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+                                    }} ></TextField>
+                                    <div>
+                                        <EditIcon style={{
+                                            cursor: 'pointer', '&:hover': {
+                                                backgroundColor: 'green',
+                                            },
+                                        }} />
+                                        <DeleteIcon style={{
+                                            cursor: 'pointer'
+                                        }} onClick={() => this.deleteQuestion(index)} />
+                                    </div>
+
+                                </div>
+                                <div className='answers'>
+                                    {question.answers.map((answer, ansIndex) => (
+                                        <div key={ansIndex} style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <TextField variant='standard' style={{ width: '100%', marginRight: '5%' }} value={answer.text} onChange={(e) => {
+                                                const updatedQuestions = [...questions];
+                                                updatedQuestions[index].answers[ansIndex].text = e.target.value;
+                                                this.setState({ questions: updatedQuestions });
+                                                localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+                                            }} ></TextField>
+                                            <div style={{ width: '100%', marginLeft: '5%', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <Button
+                                                    fullWidth
+                                                    variant="outlined"
+                                                    sx={{
+                                                        color: !answer.isCorrect ? 'green' : 'red',
+                                                        borderColor: !answer.isCorrect ? 'green' : 'red',
+                                                        '&:hover': {
+                                                            borderColor: !answer.isCorrect ? 'darkgreen' : 'darkred',
+                                                            backgroundColor: !answer.isCorrect ? 'lightgreen' : 'lightcoral',
+                                                        },
+                                                    }}
+                                                    onClick={() => {
+                                                        // if it's the only right answer, don't allow changing it to wrong
+                                                        const correctOnes = question.answers.filter((ans) => ans.isCorrect);
+                                                        if (correctOnes.length === 1 && correctOnes[0].id === answer.id) {
+                                                            this.props.setError('Negalite pakeisti vienintelio teisingo atsakymo į neteisingą');
+                                                            return;
+                                                        }
+
+                                                        const updatedQuestions = [...questions];
+                                                        updatedQuestions[index].answers[ansIndex].isCorrect = !updatedQuestions[index].answers[ansIndex].isCorrect;
+                                                        this.setState({ questions: updatedQuestions });
+                                                        localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+                                                    }}
+                                                >
+                                                    {answer.isCorrect ? "Pakeisti į neteisingą" : "Pakeisti į teisingą"}
+                                                </Button>
+                                                <Button style={{ marginLeft: 10, marginRight: 10 }} onClick={() => {
+                                                    const correctOnes = question.answers.filter((ans) => ans.isCorrect);
+                                                    if (correctOnes.length === 1 && correctOnes[0].id === answer.id) {
+                                                        this.props.setError('Negalite ištrinti vienintelio teisingo atsakymo');
+                                                        return;
+                                                    }
+
+                                                    if (question.answers.length === 1) {
+                                                        this.props.setError('Negalite ištrinti vienintelio atsakymo');
+                                                        return;
+                                                    }
+
+                                                    const updatedQuestions = [...questions];
+                                                    updatedQuestions[index].answers.splice(ansIndex, 1);
+                                                    this.setState({ questions: updatedQuestions });
+                                                    localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+
+                                                }}>Ištrinti</Button>
+                                            </div>
+
+                                        </div>
+                                    ))}
+                                    <Button fullWidth onClick={() => {
+                                        const updatedQuestions = [...questions];
+                                        updatedQuestions[index].answers.push({ id: updatedQuestions[index].answers.length, text: 'Įveskite klausimą', isCorrect: false });
+                                        this.setState({ questions: updatedQuestions });
+                                        localStorage.setItem('questions', JSON.stringify(updatedQuestions));
+                                    }}>Pridėti naują atskymą</Button>
+
+
+                                    {/* {question.answers.map((answer, ansIndex) => (
+                                        <p key={ansIndex} className={answer.isCorrect ? 'correct-answer' : ''}>
+                                            {this.indexToLetter(ansIndex)} {answer.text}
+                                        </p>
+                                    ))} */}
+                                </div>
+                                <Button fullWidth onClick={() => {
+                                    this.setState({ editingIndex: null });
+                                    localStorage.setItem('questions', JSON.stringify(questions));
+                                    this.props.setError('');
+                                }}>Baigti</Button>
+                            </> : <>
+
+                                <div>
+                                    <span>{index + 1}. {question.text}</span>
+                                    <div>
+                                        <EditIcon style={{
+                                            cursor: 'pointer'
+                                        }} onClick={() => this.allowEditing(index)} />
+                                        <DeleteIcon style={{
+                                            cursor: 'pointer'
+                                        }} onClick={() => this.deleteQuestion(index)} />
+                                    </div>
+
+                                </div>
+                                <div className='answers'>
+                                    {question.answers.map((answer, ansIndex) => (
+                                        <p key={ansIndex} className={answer.isCorrect ? 'correct-answer' : ''}>
+                                            {this.indexToLetter(ansIndex)} {answer.text}
+                                        </p>
+                                    ))}
+                                </div>
+                            </>}
                         </div>
                     ))
                 ) : (
@@ -85,6 +198,12 @@ class QuizQuestions extends Component {
             };
         });
     };
+
+    allowEditing = (index) => {
+        this.setState({ editingIndex: index });
+
+    }
+
 
     // For displaying separate answers as A), B), C) and etc...
     indexToLetter = (index) => {
