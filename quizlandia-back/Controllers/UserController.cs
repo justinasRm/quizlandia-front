@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 public class QuestionSolved
 {
     public int QuestionID { get; set; }
-    public int AnswerID { get; set; }
+    public int? AnswerID { get; set; }
     public bool IsCorrect { get; set; }
 };
 
@@ -24,6 +24,67 @@ namespace quizlandia_back.Controllers
         public UsersController(DataContext context)
         {
             _context = context;
+        }
+
+        private async Task<List<object>> ProcessQuizSolvedsAsync(int quizID, List<QuizSolved> QSdata)
+        {
+            var quizSolveds = QSdata.Where(qs => qs.QuizID == quizID).ToList();
+            var quizSolvedsArray = new List<object>();
+
+            foreach (var qs in quizSolveds)
+            {   
+                System.Console.WriteLine(qs.QuestionSolveds);
+                var questionSolveds = Newtonsoft.Json.JsonConvert.DeserializeObject<List<QuestionSolved>>(qs.QuestionSolveds);
+                var questionSolvedsArray = new List<object>();
+
+                foreach (var questionSolved in questionSolveds)
+                {   
+                    var fullQuestion = _context.QuizQuestions.Find(questionSolved.QuestionID).QuestionText;
+                    var selectedAnswer = questionSolved.AnswerID == null ? null : _context.QuizAnswers.Find(questionSolved.AnswerID).AnswerText;
+
+                    var otherAnswers = _context.QuizAnswers
+                        .Where(qa => qa.QuestionID == questionSolved.QuestionID && qa.AnswerID != questionSolved.AnswerID)
+                        .ToList();
+
+                    var otherAnswersArray = new List<object>();
+                    foreach (var oa in otherAnswers)
+                    {
+                        otherAnswersArray.Add(oa.AnswerText);
+                    }
+
+                    var correctAnswersArray = _context.QuizAnswers
+                        .Where(qa => qa.QuestionID == questionSolved.QuestionID && qa.IsCorrect == true)
+                        .Select(qa => qa.AnswerText)
+                        .ToList();
+
+                    var wrongAnswersArray = _context.QuizAnswers
+                        .Where(qa => qa.QuestionID == questionSolved.QuestionID && qa.IsCorrect == false)
+                        .Select(qa => qa.AnswerText)
+                        .ToList();
+
+                    var questionObject = new
+                    {
+                        question = fullQuestion,
+                        selectedAnswer,
+                        correctAnswersArray,
+                        wrongAnswersArray,
+                    };
+                    questionSolvedsArray.Add(questionObject);
+                }
+
+                quizSolvedsArray.Add(new
+                {
+                    qs.QuizSolvedID,
+                    qs.QuizID,
+                    qs.SolverID,
+                    qs.CorrectAnswerCount,
+                    qs.TimeTaken,
+                    qs.CreatedDate,
+                    questions = questionSolvedsArray
+                });
+            }
+
+            return quizSolvedsArray;
         }
 
         // POST: api/Users
@@ -118,20 +179,12 @@ namespace quizlandia_back.Controllers
                 })
                 .ToList();
 
-
-
             // quizzes
             var quizObjects = new List<object>();
-            // merge QSdata and quizzes by QuizID
-            
 
             foreach (var quiz in quizzes)
             {
                 var quizSolveds = QSdata.Where(qs => qs.QuizID == quiz.QuizID).ToList();
-
-                // quizSolveds.questionSolveds exmp:
-                // "[{\"questionID\":14,\"answerID\":22,\"isCorrect\":1},{\"questionID\":15,\"answerID\":27,\"isCorrect\":0},{\"questionID\":16,\"answerID\":29,\"isCorrect\":1}]",
-                // get from the questionID from quizQuestions table, answerID from quizAnswers table, change it from json to an array
 
                 var quizSolvedsArray = new List<object>();
                 foreach (var qs in quizSolveds)
@@ -143,7 +196,6 @@ namespace quizlandia_back.Controllers
                     foreach (var questionSolved in questionSolveds)
                     {   
                         var fullQuestion = _context.QuizQuestions.Find(questionSolved.QuestionID).QuestionText;
-                        // get all quizAnswers for the specific question by QuestionID
 
                         var selectedAnswer = _context.QuizAnswers.Find(questionSolved.AnswerID).AnswerText;
 
@@ -171,8 +223,6 @@ namespace quizlandia_back.Controllers
                             selectedAnswer,
                             correctAnswersArray,
                             wrongAnswersArray,
-                            // correctAnswer = correctAnswer,
-                            // otherAnswers = otherAnswersArray,
                         };
                         questionSolvedsArray.Add(questionObject);
                     }
@@ -218,6 +268,7 @@ namespace quizlandia_back.Controllers
         [HttpGet("{id}/stats/teacher")]
         public async Task<IActionResult> GetUserTeacherStats(string id)
         {
+
             var user = await _context.UserInfos.FindAsync(id);
 
             if (user == null)
@@ -225,7 +276,71 @@ namespace quizlandia_back.Controllers
                 return NotFound();
             }
 
-            return Ok(user);
+            if(user.AccountType != 0)
+            {
+                return BadRequest("User is not a teacher");
+            }
+
+            var userCreatedQuizzes = _context.Quizzes.Where(qs => qs.CreatorId == user.UserID).ToList();
+            if(userCreatedQuizzes.Count == 0)
+            {
+                return Ok(new
+                {
+                    user
+                });
+            }
+
+            var quizObjects = new List<object>();
+
+            foreach (var quiz in userCreatedQuizzes)
+            {
+                var QSdata = _context.QuizSolveds.Where(qs => qs.QuizID == quiz.QuizID).ToList();
+                var quizID = quiz.QuizID;
+
+                var quizSolvedsArray = await ProcessQuizSolvedsAsync(quiz.QuizID, QSdata);
+                if(quizSolvedsArray.Count == 0){
+                    continue;
+                };
+                
+                var updatedQuizSolvedsArray = new List<object>();
+                foreach (var quizSolved in quizSolvedsArray)
+                {
+                    dynamic quizSolvedDynamic = quizSolved;
+                    var solver = await _context.UserInfos.FindAsync(quizSolvedDynamic.SolverID);
+                    var fullSolverName = solver.Name + " " + solver.Surname;
+
+                    var updatedQuizSolved = new
+                    {
+                        quizSolvedDynamic.QuizSolvedID,
+                        // quizSolvedDynamic.QuizID,
+                        // quizSolvedDynamic.SolverID,
+                        quizSolvedDynamic.CorrectAnswerCount,
+                        quizSolvedDynamic.TimeTaken,
+                        quizSolvedDynamic.CreatedDate,
+                        quizSolvedDynamic.questions,
+                        fullSolverName
+                    };
+
+                    updatedQuizSolvedsArray.Add(updatedQuizSolved);
+                }
+
+                quizObjects.Add(new {
+                    quiz.Title,
+                    quiz.Description,
+                    quiz.CreatedDate,
+                    quiz.Status,
+                    quiz.QuizCode,
+                    quiz.SolvedCount,
+                    quiz.TimeLimit,
+                    quizSolveds = updatedQuizSolvedsArray});
+            }
+
+
+            return Ok(new
+            {
+                user,
+                quizObjects
+            });
         }
     }
 }

@@ -102,6 +102,14 @@ namespace quizlandia_back.Controllers
                 return BadRequest(ModelState);
             }
 
+            var user = await _context.UserInfos.FindAsync(createQuizDto.CreatorId);
+            if (user == null)
+            {
+                return NotFound($"User with ID {createQuizDto.CreatorId} not found.");
+            }
+
+            user.QuizCount += 1;
+
             // Check if the QuizCode already exists
             var existingQuiz = await _context.Quizzes
                 .FirstOrDefaultAsync(q => q.QuizCode == createQuizDto.QuizCode);
