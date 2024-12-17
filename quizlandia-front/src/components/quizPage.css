@@ -28,7 +28,7 @@
 .quiz-info{
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
 }
 
 .quiz-creation-block > div > span{
@@ -206,7 +206,7 @@
     background-color: rgb(123 100 90);
 }
 
-.new-question-block span{
+.new-question-block span, .quiz-info > span{
     font-weight: 600;
 }
 

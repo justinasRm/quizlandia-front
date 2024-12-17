@@ -104,14 +104,18 @@ class AiQuiz extends Component {
                         helperText={promptError || 'Užklausa turi būti tarp 3 ir 25 simbolių.'}
                     />
                 </div>
-                <FormControl fullWidth style={{ marginTop: '20px' }}>
+                <FormControl fullWidth>
                     <InputLabel>Pasirinkite kalbą</InputLabel>
-                    <Select value={language} onChange={this.handleLanguageChange}>
+                    <Select 
+                        value={language} 
+                        onChange={this.handleLanguageChange}
+                        label="Pasirinkite kalbą"
+                    >
                         <MenuItem value="english">English</MenuItem>
                         <MenuItem value="lithuanian">Lietuvių k.</MenuItem>
                     </Select>
                 </FormControl>
-                <div style={{ marginTop: '20px' }}>
+                <div>
                     <TextField
                         label="Klausimų skaičius"
                         type="number"
@@ -122,7 +126,7 @@ class AiQuiz extends Component {
                         helperText="Maksimalus skaičius: 10"
                     />
                 </div>
-                <div style={{ marginTop: '20px' }}>
+                <div>
                     <TextField
                         label="Atsakymų skaičius kiekvienam klausimui"
                         type="number"

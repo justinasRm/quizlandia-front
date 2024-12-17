@@ -115,34 +115,49 @@ const QuizPage = () => {
             <div className='quiz-creation-block'>
                 {error && <span style={{ color: 'red' }}>{error}</span>}
                 <div>
-                    <div className='quiz-info'>
-                        <span>Klausimyno pavadinimas</span>
-                        <TextField value={quizName} onChange={(e) => {
-                            setQuizName(e.target.value);
-                        }}></TextField>
-                    </div>
-                    <div className='quiz-info'>
-                        <span>Klausimyno aprašymas</span>
-                        <TextField value={quizDesc} onChange={(e) => {
-                            setQuizDesc(e.target.value);
-                        }}></TextField>
+                    <div style={{display:"flex", flexDirection:"column", gap: "20px", marginBottom: "20px"}}>
+                        <div className='quiz-info'>
+                            <span>Klausimyno pavadinimas</span>
+                            <TextField placeholder='Pavadinimas' value={quizName} onChange={(e) => {
+                                setQuizName(e.target.value);
+                            }}></TextField>
+                        </div>
+                        <div className='quiz-info'>
+                            <span>Klausimyno aprašymas</span>
+                            <TextField placeholder='Aprašymas' value={quizDesc} onChange={(e) => {
+                                setQuizDesc(e.target.value);
+                            }}></TextField>
 
+                        </div>
+                        <div className='quiz-info'>
+                            <span>Laiko limitas sekundėmis (palikite tuščią, jei nepritaikyti)</span>
+                            <TextField
+                                placeholder='1' 
+                                min='1' 
+                                type='number' 
+                                value={timeLimit} 
+                                onChange={(e) => { 
+                                    const value = e.target.value;
+                                    if (value === "" || Number(value) >= 1) {
+                                      setTimeLimit(value);
+                                    }
+                                }}>
+
+                            </TextField>
+                        </div>
+                        <div className='quiz-info'>
+                            <span>Klausimyno kodas (10 simbolių limitas)</span>
+                            <TextField placeholder='Kodas' value={quizCode} onChange={(e) => { setQuizCode(e.target.value) }}></TextField>
+                        </div>
                     </div>
-                    <div className='quiz-info'>
-                        <span>Laiko limitas sekundėmis (palikite tuščią, jei nepritaikyti)</span>
-                        <TextField type='number' value={timeLimit} onChange={(e) => { setTimeLimit(e.target.value) }}></TextField>
-                    </div>
-                    <div className='quiz-info'>
-                        <span>Klausimyno kodas (10 simbolių limitas)</span>
-                        <TextField value={quizCode} onChange={(e) => { setQuizCode(e.target.value) }}></TextField>
-                    </div>
+
                     <div className='quiz-types'>
                         <span>Klausimyno tipas:</span>
                         <div>
                             <button className={currentQuizIndex === 0 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(0)}>Rankinis</button>
                             <button className={currentQuizIndex === 1 ? 'active-type' : ''} onClick={() => handleQuizTypeChange(1)}>AI</button>
                         </div>
-                    </div>
+                    </div>  
 
                     {renderQuizComponent()}
                 </div>
